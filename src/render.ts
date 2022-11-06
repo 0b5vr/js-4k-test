@@ -1,5 +1,6 @@
 import { GL_FRAMEBUFFER, GL_TEXTURE0, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from './gl-constants';
 import { HEIGHT, WIDTH } from './constants';
+import { INTRO_LENGTH, STOP_RENDERING_AFTER_END } from './config';
 import { audio } from './audio';
 import { fbmTexture } from './fbmTexture';
 import { gl } from './gl';
@@ -10,6 +11,11 @@ let programRaymarchHot = programRaymarch;
 
 export function render(): void {
   const time = audio.currentTime - musicBeginTime;
+
+  // prevent using a GPU after the content ends
+  if ( STOP_RENDERING_AFTER_END ) {
+    if ( time > INTRO_LENGTH ) { return; }
+  }
 
   // -- program ------------------------------------------------------------------------------------
   gl.useProgram( programRaymarchHot );
