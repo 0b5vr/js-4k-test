@@ -45,6 +45,7 @@ void main() {
   dest = vec2( 0.0 ); // you might want to ditch this
 
   uint sampleIndex = uint( gl_FragCoord.x ) + 4096u * uint( gl_FragCoord.y );
+  float wholeTime = float( sampleIndex ) / r;
   uvec4 moddedIndex = sampleIndex % uvec4( r * B2T * vec4( 1u, 4u, 16u, 64u ) );
   vec4 time = vec4( moddedIndex ) / r;
 
@@ -97,4 +98,7 @@ void main() {
       texture( f, uv + 0.05 ).x
     ) ) );
   }
+
+  // fade in / fade out
+  dest *= smoothstep( 0.0, 1.0, wholeTime ) * smoothstep( 0.0, 1.0, 60.0 - wholeTime );
 }
