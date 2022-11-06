@@ -85,7 +85,10 @@ if ( import.meta.env.DEV ) {
     bufferSource.buffer = buffer;
 
     bufferSource.connect( audio.destination );
-    bufferSource.start( 0.0, offset );
+    bufferSource.start(
+      audio.currentTime + Math.max( 0.0, -offset ),
+      Math.max( 0.0, offset ),
+    );
   };
 
   window.addEventListener( 'keydown', ( { key } ) => {
@@ -139,6 +142,9 @@ if ( import.meta.hot ) {
     bufferSource.buffer = buffer;
 
     bufferSource.connect( audio.destination );
-    bufferSource.start( 0.0, offset );
+    bufferSource.start(
+      audio.currentTime + Math.max( 0.0, -offset ),
+      Math.max( 0.0, offset ),
+    );
   } );
 }
