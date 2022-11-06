@@ -6,6 +6,17 @@
  */
 export const INTRO_LENGTH = 60;
 
+/**
+ * Specify the square root of size of music buffer.
+ *
+ * `MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT / sampleRate` will be the length in seconds you have in your music.
+ *
+ * - `1024` == 1048576 samples == 21.845 sec in 48000Hz
+ * - `2048` == 4194304 samples == 87.381 sec in 48000Hz
+ * - `4096` == 16777216 samples == 349.525 sec in 48000Hz
+ */
+export const MUSIC_BUFFER_SIZE_SQRT = 4096;
+
 // == the despair zone =============================================================================
 
 /**

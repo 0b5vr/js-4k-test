@@ -1,16 +1,15 @@
 import { GL_COLOR_ATTACHMENT0, GL_FLOAT, GL_FRAMEBUFFER, GL_RG, GL_RG32F, GL_TEXTURE0, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from './gl-constants';
+import { MUSIC_BUFFER_SIZE_SQRT } from './config';
 import { audio, sampleRate } from './audio';
 import { fbmTexture } from './fbmTexture';
 import { gl } from './gl';
 import { programMusic } from './programMusic';
 
 // -- texture --------------------------------------------------------------------------------------
-const SIZE = 4096;
-
 const texture = gl.createTexture()!;
 
 gl.bindTexture( GL_TEXTURE_2D, texture );
-gl.texStorage2D( GL_TEXTURE_2D, 1, GL_RG32F, SIZE, SIZE );
+gl.texStorage2D( GL_TEXTURE_2D, 1, GL_RG32F, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT );
 
 // -- framebuffer ----------------------------------------------------------------------------------
 const framebuffer = gl.createFramebuffer()!;
@@ -41,15 +40,15 @@ gl.uniform1i(
 );
 
 // -- render ---------------------------------------------------------------------------------------
-gl.viewport( 0, 0, SIZE, SIZE );
+gl.viewport( 0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT );
 gl.drawArrays( GL_TRIANGLE_STRIP, 0, 4 );
 
 // -- read pixels ----------------------------------------------------------------------------------
-const pixels = new Float32Array( 2 * SIZE * SIZE );
-gl.readPixels( 0, 0, SIZE, SIZE, GL_RG, GL_FLOAT, pixels );
+const pixels = new Float32Array( 2 * MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT );
+gl.readPixels( 0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels );
 
 // -- audio ----------------------------------------------------------------------------------------
-const buffer = audio.createBuffer( 2, SIZE * SIZE, sampleRate );
+const buffer = audio.createBuffer( 2, MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT, sampleRate );
 const channels = [
   buffer.getChannelData( 0 ),
   buffer.getChannelData( 1 ),
@@ -94,12 +93,12 @@ if ( import.meta.hot ) {
 
     // -- render -----------------------------------------------------------------------------------
     gl.bindFramebuffer( GL_FRAMEBUFFER, framebuffer );
-    gl.viewport( 0, 0, SIZE, SIZE );
+    gl.viewport( 0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT );
     gl.drawArrays( GL_TRIANGLE_STRIP, 0, 4 );
 
     // -- read pixels ----------------------------------------------------------------------------------
-    const pixels = new Float32Array( 2 * SIZE * SIZE );
-    gl.readPixels( 0, 0, SIZE, SIZE, GL_RG, GL_FLOAT, pixels );
+    const pixels = new Float32Array( 2 * MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT );
+    gl.readPixels( 0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels );
 
     // -- audio ----------------------------------------------------------------------------------------
     const buffer = audio.createBuffer( 2, SIZE * SIZE, sampleRate );
