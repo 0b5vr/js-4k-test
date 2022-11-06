@@ -1,5 +1,5 @@
 import { GL_COLOR_ATTACHMENT0, GL_FLOAT, GL_FRAMEBUFFER, GL_RG, GL_RG32F, GL_TEXTURE0, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from './gl-constants';
-import { MUSIC_BUFFER_SIZE_SQRT } from './config';
+import { MUSIC_BUFFER_SIZE_SQRT, START_DELAY } from './config';
 import { audio, sampleRate } from './audio';
 import { fbmTexture } from './fbmTexture';
 import { gl } from './gl';
@@ -65,7 +65,7 @@ export let musicBeginTime: number;
 export function playMusic(): void {
   audio.resume();
 
-  musicBeginTime = audio.currentTime;
+  musicBeginTime = audio.currentTime + START_DELAY; // delay 5 sec
 
   bufferSource = audio.createBufferSource();
   bufferSource.buffer = buffer;

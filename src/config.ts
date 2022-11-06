@@ -7,6 +7,14 @@
 export const INTRO_LENGTH = 60;
 
 /**
+ * Delays the start of the demo.
+ *
+ * Chrome shows the "Press Esc to exit full screen" dialog after you enter fullscreen for 5 sec,
+ * so it's recommended to leave it to be `5`.
+ */
+export const START_DELAY = 5;
+
+/**
  * Specify the square root of size of music buffer.
  *
  * `MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT / sampleRate` will be the length in seconds you have in your music.
