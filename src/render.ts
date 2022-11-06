@@ -25,7 +25,7 @@ export function render(): void {
   gl.bindTexture( GL_TEXTURE_2D, fbmTexture );
 
   gl.uniform1f(
-    gl.getUniformLocation( programRaymarchHot, 'time' ),
+    gl.getUniformLocation( programRaymarchHot, 't' ),
     time,
   );
   gl.uniform1i(
