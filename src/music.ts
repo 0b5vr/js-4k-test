@@ -57,8 +57,7 @@ pixels.map( ( v, i ) => (
   channels[ i % 2 ][ ~~( i / 2 ) ] = v
 ) );
 
-let bufferSource = audio.createBufferSource();
-bufferSource.buffer = buffer;
+let bufferSource: AudioBufferSourceNode;
 
 // -- play -----------------------------------------------------------------------------------------
 export let musicBeginTime: number;
@@ -68,8 +67,36 @@ export function playMusic(): void {
 
   musicBeginTime = audio.currentTime;
 
+  bufferSource = audio.createBufferSource();
+  bufferSource.buffer = buffer;
+
   bufferSource.connect( audio.destination );
-  bufferSource.start();
+  bufferSource.start( musicBeginTime );
+}
+
+// -- controls -------------------------------------------------------------------------------------
+if ( import.meta.env.DEV ) {
+  const seek = (): void => {
+    bufferSource.stop();
+
+    const offset = audio.currentTime - musicBeginTime;
+
+    bufferSource = audio.createBufferSource();
+    bufferSource.buffer = buffer;
+
+    bufferSource.connect( audio.destination );
+    bufferSource.start( 0.0, offset );
+  };
+
+  window.addEventListener( 'keydown', ( { key } ) => {
+    if ( key === 'ArrowLeft' ) {
+      musicBeginTime += 1.0;
+      seek();
+    } else if ( key === 'ArrowRight' ) {
+      musicBeginTime -= 1.0;
+      seek();
+    }
+  } );
 }
 
 // -- hot ------------------------------------------------------------------------------------------
@@ -97,15 +124,9 @@ if ( import.meta.hot ) {
     gl.drawArrays( GL_TRIANGLE_STRIP, 0, 4 );
 
     // -- read pixels ----------------------------------------------------------------------------------
-    const pixels = new Float32Array( 2 * MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT );
     gl.readPixels( 0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels );
 
     // -- audio ----------------------------------------------------------------------------------------
-    const buffer = audio.createBuffer( 2, SIZE * SIZE, sampleRate );
-    const channels = [
-      buffer.getChannelData( 0 ),
-      buffer.getChannelData( 1 ),
-    ];
     pixels.map( ( v, i ) => (
       channels[ i % 2 ][ ~~( i / 2 ) ] = v
     ) );
