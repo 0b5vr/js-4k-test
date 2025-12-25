@@ -9,8 +9,8 @@
     "build-post": "deno run --allow-read --allow-write bin/postprocess.ts dist/assets/*.js dist/postprocessed.js",
     "build-comp": "deno run --allow-read --allow-write --allow-run bin/compeko.ts dist/postprocessed.js dist/compeko.html",
     "build-jsexe": "jsexe -cn -po dist/postprocessed.js dist/jsexe.html",
-    "lint": "eslint \"src/**/*.ts\"",
-    "lint-fix": "eslint \"src/**/*.ts\" --fix",
+    "lint": "eslint",
+    "lint-fix": "eslint --fix",
     "typecheck": "tsc",
     "preview": "vite preview"
   },
