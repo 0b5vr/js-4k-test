@@ -16,35 +16,35 @@ export function render(): void {
   const time = audio.currentTime - musicBeginTime;
 
   // prevent using a GPU after the content ends
-  if ( STOP_RENDERING_AFTER_END ) {
-    if ( time > INTRO_LENGTH ) { return; }
+  if (STOP_RENDERING_AFTER_END) {
+    if (time > INTRO_LENGTH) { return; }
   }
 
   // -- program ------------------------------------------------------------------------------------
-  gl.useProgram( programRaymarchHot );
+  gl.useProgram(programRaymarchHot);
 
   // -- uniforms -----------------------------------------------------------------------------------
-  gl.activeTexture( GL_TEXTURE0 );
-  gl.bindTexture( GL_TEXTURE_2D, fbmTexture );
+  gl.activeTexture(GL_TEXTURE0);
+  gl.bindTexture(GL_TEXTURE_2D, fbmTexture);
 
   gl.uniform1f(
-    gl.getUniformLocation( programRaymarchHot, 't' ),
+    gl.getUniformLocation(programRaymarchHot, 't'),
     time,
   );
   gl.uniform1i(
-    gl.getUniformLocation( programRaymarchHot, 'f' ),
-    0
+    gl.getUniformLocation(programRaymarchHot, 'f'),
+    0,
   );
 
   // -- render -------------------------------------------------------------------------------------
-  gl.bindFramebuffer( GL_FRAMEBUFFER, null );
-  gl.viewport( 0, 0, WIDTH, HEIGHT );
-  gl.drawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+  gl.bindFramebuffer(GL_FRAMEBUFFER, null);
+  gl.viewport(0, 0, WIDTH, HEIGHT);
+  gl.drawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
 // -- hot ------------------------------------------------------------------------------------------
-if ( import.meta.hot ) {
-  import.meta.hot.accept( './programRaymarch', ( { programRaymarch } ) => {
+if (import.meta.hot) {
+  import.meta.hot.accept('./programRaymarch', ({ programRaymarch }) => {
     programRaymarchHot = programRaymarch;
-  } );
+  });
 }

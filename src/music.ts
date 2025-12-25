@@ -8,13 +8,13 @@ import { programMusic } from './programMusic';
 // -- texture --------------------------------------------------------------------------------------
 const texture = gl.createTexture()!;
 
-gl.bindTexture( GL_TEXTURE_2D, texture );
-gl.texStorage2D( GL_TEXTURE_2D, 1, GL_RG32F, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT );
+gl.bindTexture(GL_TEXTURE_2D, texture);
+gl.texStorage2D(GL_TEXTURE_2D, 1, GL_RG32F, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT);
 
 // -- framebuffer ----------------------------------------------------------------------------------
 const framebuffer = gl.createFramebuffer()!;
 
-gl.bindFramebuffer( GL_FRAMEBUFFER, framebuffer );
+gl.bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 gl.framebufferTexture2D(
   GL_FRAMEBUFFER,
   GL_COLOR_ATTACHMENT0,
@@ -24,38 +24,38 @@ gl.framebufferTexture2D(
 );
 
 // -- program --------------------------------------------------------------------------------------
-gl.useProgram( programMusic );
+gl.useProgram(programMusic);
 
 // -- uniforms -------------------------------------------------------------------------------------
-gl.activeTexture( GL_TEXTURE0 );
-gl.bindTexture( GL_TEXTURE_2D, fbmTexture );
+gl.activeTexture(GL_TEXTURE0);
+gl.bindTexture(GL_TEXTURE_2D, fbmTexture);
 
 gl.uniform1f(
-  gl.getUniformLocation( programMusic, 'r' ),
+  gl.getUniformLocation(programMusic, 'r'),
   sampleRate,
 );
 gl.uniform1i(
-  gl.getUniformLocation( programMusic, 'f' ),
-  0
+  gl.getUniformLocation(programMusic, 'f'),
+  0,
 );
 
 // -- render ---------------------------------------------------------------------------------------
-gl.viewport( 0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT );
-gl.drawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+gl.viewport(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT);
+gl.drawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 // -- read pixels ----------------------------------------------------------------------------------
-const pixels = new Float32Array( 2 * MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT );
-gl.readPixels( 0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels );
+const pixels = new Float32Array(2 * MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT);
+gl.readPixels(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels);
 
 // -- audio ----------------------------------------------------------------------------------------
-const buffer = audio.createBuffer( 2, MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT, sampleRate );
+const buffer = audio.createBuffer(2, MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT, sampleRate);
 const channels = [
-  buffer.getChannelData( 0 ),
-  buffer.getChannelData( 1 ),
+  buffer.getChannelData(0),
+  buffer.getChannelData(1),
 ];
-pixels.map( ( v, i ) => (
-  channels[ i % 2 ][ ~~( i / 2 ) ] = v
-) );
+pixels.map((v, i) => (
+  channels[i % 2][~~(i / 2)] = v
+));
 
 let bufferSource: AudioBufferSourceNode;
 
@@ -77,12 +77,12 @@ export function playMusic(): void {
   bufferSource = audio.createBufferSource();
   bufferSource.buffer = buffer;
 
-  bufferSource.connect( audio.destination );
-  bufferSource.start( musicBeginTime );
+  bufferSource.connect(audio.destination);
+  bufferSource.start(musicBeginTime);
 }
 
 // -- controls -------------------------------------------------------------------------------------
-if ( import.meta.env.DEV ) {
+if (import.meta.env.DEV) {
   const seek = (): void => {
     bufferSource.stop();
 
@@ -91,55 +91,55 @@ if ( import.meta.env.DEV ) {
     bufferSource = audio.createBufferSource();
     bufferSource.buffer = buffer;
 
-    bufferSource.connect( audio.destination );
+    bufferSource.connect(audio.destination);
     bufferSource.start(
-      audio.currentTime + Math.max( 0.0, -offset ),
-      Math.max( 0.0, offset ),
+      audio.currentTime + Math.max(0.0, -offset),
+      Math.max(0.0, offset),
     );
   };
 
-  window.addEventListener( 'keydown', ( { key } ) => {
-    if ( key === 'ArrowLeft' ) {
+  window.addEventListener('keydown', ({ key }) => {
+    if (key === 'ArrowLeft') {
       musicBeginTime += 1.0;
       seek();
-    } else if ( key === 'ArrowRight' ) {
+    } else if (key === 'ArrowRight') {
       musicBeginTime -= 1.0;
       seek();
     }
-  } );
+  });
 }
 
 // -- hot ------------------------------------------------------------------------------------------
-if ( import.meta.hot ) {
-  import.meta.hot.accept( './programMusic', ( { programMusic } ) => {
+if (import.meta.hot) {
+  import.meta.hot.accept('./programMusic', ({ programMusic }) => {
     // -- program ----------------------------------------------------------------------------------
-    gl.useProgram( programMusic );
+    gl.useProgram(programMusic);
 
     // -- uniforms ---------------------------------------------------------------------------------
-    gl.activeTexture( GL_TEXTURE0 );
-    gl.bindTexture( GL_TEXTURE_2D, fbmTexture );
+    gl.activeTexture(GL_TEXTURE0);
+    gl.bindTexture(GL_TEXTURE_2D, fbmTexture);
 
     gl.uniform1f(
-      gl.getUniformLocation( programMusic, 'r' ),
+      gl.getUniformLocation(programMusic, 'r'),
       sampleRate,
     );
     gl.uniform1i(
-      gl.getUniformLocation( programMusic, 'f' ),
-      0
+      gl.getUniformLocation(programMusic, 'f'),
+      0,
     );
 
     // -- render -----------------------------------------------------------------------------------
-    gl.bindFramebuffer( GL_FRAMEBUFFER, framebuffer );
-    gl.viewport( 0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT );
-    gl.drawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+    gl.bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    gl.viewport(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT);
+    gl.drawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     // -- read pixels ----------------------------------------------------------------------------------
-    gl.readPixels( 0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels );
+    gl.readPixels(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels);
 
     // -- audio ----------------------------------------------------------------------------------------
-    pixels.map( ( v, i ) => (
-      channels[ i % 2 ][ ~~( i / 2 ) ] = v
-    ) );
+    pixels.map((v, i) => (
+      channels[i % 2][~~(i / 2)] = v
+    ));
 
     bufferSource.stop();
 
@@ -148,10 +148,10 @@ if ( import.meta.hot ) {
     bufferSource = audio.createBufferSource();
     bufferSource.buffer = buffer;
 
-    bufferSource.connect( audio.destination );
+    bufferSource.connect(audio.destination);
     bufferSource.start(
-      audio.currentTime + Math.max( 0.0, -offset ),
-      Math.max( 0.0, offset ),
+      audio.currentTime + Math.max(0.0, -offset),
+      Math.max(0.0, offset),
     );
-  } );
+  });
 }

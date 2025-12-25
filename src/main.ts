@@ -10,7 +10,7 @@ canvas.height = HEIGHT;
  * The main update loop.
  */
 function update(): void {
-  requestAnimationFrame( update );
+  requestAnimationFrame(update);
   render();
 }
 
