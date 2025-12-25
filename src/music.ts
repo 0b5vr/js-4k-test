@@ -111,7 +111,10 @@ if (import.meta.env.DEV) {
 
 // -- hot ------------------------------------------------------------------------------------------
 if (import.meta.hot) {
-  import.meta.hot.accept('./programMusic', ({ programMusic }) => {
+  import.meta.hot.accept('./programMusic', (mod) => {
+    if (mod == null) { return; }
+    const { programMusic } = mod;
+
     // -- program ----------------------------------------------------------------------------------
     gl.useProgram(programMusic);
 

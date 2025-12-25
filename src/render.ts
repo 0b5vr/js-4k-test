@@ -44,7 +44,8 @@ export function render(): void {
 
 // -- hot ------------------------------------------------------------------------------------------
 if (import.meta.hot) {
-  import.meta.hot.accept('./programRaymarch', ({ programRaymarch }) => {
-    programRaymarchHot = programRaymarch;
+  import.meta.hot.accept('./programRaymarch', (mod) => {
+    if (mod == null) { return; }
+    programRaymarchHot = mod.programRaymarch;
   });
 }

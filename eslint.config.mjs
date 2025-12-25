@@ -5,7 +5,10 @@ import stylistic from '@stylistic/eslint-plugin';
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/**/*'],
+    ignores: [
+      '**/dist/**/*',
+      'domprops.ts',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

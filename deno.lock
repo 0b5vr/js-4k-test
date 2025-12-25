@@ -59,22 +59,19 @@
         "npm:@0b5vr/experimental@0.9",
         "npm:@eslint/js@^9.39.2",
         "npm:@stylistic/eslint-plugin@^5.6.1",
-        "npm:@types/glob@^7.2.0",
         "npm:@types/svg-parser@^2.0.3",
         "npm:@types/tempy@0.3",
         "npm:@types/terser@^3.12.0",
         "npm:eslint@^9.39.2",
-        "npm:glob-promise@^4.2.2",
-        "npm:glob@^8.0.1",
         "npm:globals@^16.5.0",
-        "npm:rollup-plugin-visualizer@^5.6.0",
+        "npm:rollup-plugin-visualizer@^6.0.5",
         "npm:svg-parser@^2.0.4",
         "npm:tempy@^3.1.0",
         "npm:terser@^5.14.2",
         "npm:typescript-eslint@^8.50.1",
-        "npm:typescript@^4.5.4",
-        "npm:vite-plugin-inspect@0.6",
-        "npm:vite@^2.9.12"
+        "npm:typescript@^5.9.3",
+        "npm:vite-plugin-inspect@^11.3.3",
+        "npm:vite@^7.3.0"
       ]
     }
   }
