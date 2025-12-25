@@ -8,9 +8,9 @@ const SIZE = 1024;
 /**
  * The 2D texture containing the precomputed 3D fbm noise using {@link programFbm}.
  */
-export const fbmTexture = gl.createTexture()!;
+export const textureFbm = gl.createTexture()!;
 
-gl.bindTexture(GL_TEXTURE_2D, fbmTexture);
+gl.bindTexture(GL_TEXTURE_2D, textureFbm);
 gl.texStorage2D(GL_TEXTURE_2D, 1, GL_R32F, SIZE, SIZE);
 
 // -- framebuffer ----------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ gl.framebufferTexture2D(
   GL_FRAMEBUFFER,
   GL_COLOR_ATTACHMENT0,
   GL_TEXTURE_2D,
-  fbmTexture,
+  textureFbm,
   0,
 );
 

@@ -2,7 +2,7 @@ import { GL_FRAMEBUFFER, GL_TEXTURE0, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '.
 import { HEIGHT, WIDTH } from './constants';
 import { INTRO_LENGTH, STOP_RENDERING_AFTER_END } from './config';
 import { audio } from './audio';
-import { fbmTexture } from './fbmTexture';
+import { textureFbm } from './textureFbm';
 import { gl } from './gl';
 import { devMusicBeginTime } from './music';
 import { programRaymarch } from './programRaymarch';
@@ -29,7 +29,7 @@ export function render(): void {
 
   // -- uniforms -----------------------------------------------------------------------------------
   gl.activeTexture(GL_TEXTURE0);
-  gl.bindTexture(GL_TEXTURE_2D, fbmTexture);
+  gl.bindTexture(GL_TEXTURE_2D, textureFbm);
 
   gl.uniform1f(
     gl.getUniformLocation(programRaymarchHot, 't'),
