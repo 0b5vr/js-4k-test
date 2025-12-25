@@ -5,13 +5,15 @@ import Inspect from 'vite-plugin-inspect';
 import { shaderMinifierPlugin } from './plugins/vite-shader-minifier-plugin';
 import { htmlMinifierPlugin } from './plugins/vite-html-minifier-plugin';
 
-export default defineConfig( ( { mode } ) => {
+export default defineConfig(({ mode }) => {
   return {
     resolve: {
       alias: {
-        ...( mode === 'prod' ? {
-          'webgl-memory': `${ __dirname }/src/dummy.ts`, // don't want to import webgl-memory when it's prod build
-        } : {} ),
+        ...(
+          mode === 'prod'
+            ? { 'webgl-memory': `${__dirname}/src/dummy.ts` } // don't want to import webgl-memory when it's prod build
+            : {}
+        ),
       },
     },
     build: {
@@ -22,27 +24,27 @@ export default defineConfig( ( { mode } ) => {
       polyfillModulePreload: false, // size
       rollupOptions: {
         plugins: [
-          visualizer( {
+          visualizer({
             json: true,
             gzipSize: true,
             brotliSize: true,
-          } ),
+          }),
         ],
-      }
+      },
     },
     plugins: [
       Inspect(),
-      htmlMinifierPlugin( {
+      htmlMinifierPlugin({
         minify: true, // mode === 'prod',
-      } ),
-      shaderMinifierPlugin( {
+      }),
+      shaderMinifierPlugin({
         minify: true, // mode === 'prod',
         minifierOptions: {
           preserveExternals: true,
           aggressiveInlining: true,
           noSequence: true,
         },
-      } ),
-    ]
+      }),
+    ],
   };
-} );
+});

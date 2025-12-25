@@ -4,7 +4,7 @@ import cp from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-const exec = promisify( cp.exec );
+const exec = promisify(cp.exec);
 
 const fileRegex = /\?shader$/;
 
@@ -21,48 +21,48 @@ export interface ShaderMinifierOptions {
   smoothstep?: boolean;
 }
 
-function buildMinifierOptionsString( options: ShaderMinifierOptions ): string {
+function buildMinifierOptionsString(options: ShaderMinifierOptions): string {
   let str = '';
 
-  if ( options.hlsl ) {
+  if (options.hlsl) {
     str += '--hlsl ';
   }
 
   str += '--format text ';
 
-  if ( options.fieldNames ) {
-    str += `--field-names ${ options.fieldNames } `;
+  if (options.fieldNames) {
+    str += `--field-names ${options.fieldNames} `;
   }
 
-  if ( options.preserveExternals ) {
+  if (options.preserveExternals) {
     str += '--preserve-externals ';
   }
 
-  if ( options.preserveAllGlobals ) {
+  if (options.preserveAllGlobals) {
     str += '--preserve-all-globals ';
   }
 
-  if ( options.noInlining ) {
+  if (options.noInlining) {
     str += '--no-inlining ';
   }
 
-  if ( options.aggressiveInlining ) {
+  if (options.aggressiveInlining) {
     str += '--aggressive-inlining ';
   }
 
-  if ( options.noRenaming ) {
+  if (options.noRenaming) {
     str += '--no-renaming ';
   }
 
-  if ( options.noRenamingList ) {
-    str += `--no-renaming-list ${ options.noRenamingList.join( ',' ) } `;
+  if (options.noRenamingList) {
+    str += `--no-renaming-list ${options.noRenamingList.join(',')} `;
   }
 
-  if ( options.noSequence ) {
+  if (options.noSequence) {
     str += '--no-sequence ';
   }
 
-  if ( options.smoothstep ) {
+  if (options.smoothstep) {
     str += '--smoothstep ';
   }
 
@@ -75,47 +75,47 @@ export interface ShaderMinifierPluginOptions {
 }
 
 export const shaderMinifierPlugin: (
-  options: ShaderMinifierPluginOptions
-) => Plugin = ( { minify, minifierOptions } ) => {
+  options: ShaderMinifierPluginOptions,
+) => Plugin = ({ minify, minifierOptions }) => {
   return {
     name: 'shader-minifier',
     enforce: 'pre',
-    async transform( src: string, id: string ) {
-      if ( fileRegex.test( id ) ) {
-        if ( !minify ) {
-          return `export default \`${ src }\`;`;
+    async transform(src: string, id: string) {
+      if (fileRegex.test(id)) {
+        if (!minify) {
+          return `export default \`${src}\`;`;
         }
 
-        if ( /^#pragma shader_minifier_plugin bypass$/m.test( src ) ) {
-          console.warn( `#pragma shader_minifier_plugin detected in ${ id }. Bypassing shader minifier` );
+        if (/^#pragma shader_minifier_plugin bypass$/m.test(src)) {
+          console.warn(`#pragma shader_minifier_plugin detected in ${id}. Bypassing shader minifier`);
 
-          return `export default \`${ src }\`;`;
+          return `export default \`${src}\`;`;
         }
 
-        const name = path.basename( id ).split( '?' )[ 0 ];
+        const name = path.basename(id).split('?')[0];
 
-        const minifierOptionsString = buildMinifierOptionsString( minifierOptions );
+        const minifierOptionsString = buildMinifierOptionsString(minifierOptions);
 
-        const tempy = await import( 'tempy' );
+        const tempy = await import('tempy');
 
-        const minified = await tempy.temporaryFileTask( async ( pathOriginal ) => {
-          await fs.promises.writeFile( pathOriginal, src, { encoding: 'utf8' } );
+        const minified = await tempy.temporaryFileTask(async (pathOriginal) => {
+          await fs.promises.writeFile(pathOriginal, src, { encoding: 'utf8' });
 
-          return await tempy.temporaryFileTask( async ( pathMinified ) => {
-            const command = `shader_minifier.exe ${ pathOriginal } ${ minifierOptionsString }-o ${ pathMinified }`;
+          return await tempy.temporaryFileTask(async (pathMinified) => {
+            const command = `shader_minifier.exe ${pathOriginal} ${minifierOptionsString}-o ${pathMinified}`;
 
-            await exec( command ).catch( ( error ) => {
-              throw new Error( error.stdout );
-            } );
+            await exec(command).catch((error) => {
+              throw new Error(error.stdout);
+            });
 
-            return await fs.promises.readFile( pathMinified, { encoding: 'utf8' } );
-          }, { name } );
-        }, { name } );
+            return await fs.promises.readFile(pathMinified, { encoding: 'utf8' });
+          }, { name });
+        }, { name });
 
         return {
-          code: `export default \`${ minified }\`;`,
+          code: `export default \`${minified}\`;`,
         };
       }
-    }
+    },
   };
 };
