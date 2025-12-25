@@ -9,6 +9,9 @@ import { programRaymarch } from './programRaymarch';
 
 let programRaymarchHot = programRaymarch;
 
+/**
+ * Renders the main scene.
+ */
 export function render(): void {
   const time = audio.currentTime - musicBeginTime;
 

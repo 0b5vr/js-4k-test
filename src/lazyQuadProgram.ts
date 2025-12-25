@@ -3,6 +3,9 @@ import { bufferP } from './bufferP';
 import { gl } from './gl';
 import quadVert from './assets/quad.vert?shader';
 
+/**
+ * Simply receives a fragment shader source and returns a WebGLProgram that renders a full-screen quad.
+ */
 export function lazyQuadProgram( frag: string ): WebGLProgram {
   // -- vert ---------------------------------------------------------------------------------------
   const vertexShader = gl.createShader( GL_VERTEX_SHADER )!;

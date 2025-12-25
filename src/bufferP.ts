@@ -2,6 +2,9 @@ import { GL_ARRAY_BUFFER, GL_STATIC_DRAW } from './gl-constants';
 import { TRIANGLE_STRIP_QUAD } from '@0b5vr/experimental';
 import { gl } from './gl';
 
+/**
+ * A quad buffer used for rendering full-screen quads.
+ */
 export const bufferP = gl.createBuffer()!;
 
 gl.bindBuffer( GL_ARRAY_BUFFER, bufferP );

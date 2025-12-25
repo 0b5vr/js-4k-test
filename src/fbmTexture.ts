@@ -5,6 +5,9 @@ import { programFbm } from './programFbm';
 // -- texture --------------------------------------------------------------------------------------
 const SIZE = 1024;
 
+/**
+ * The 2D texture containing the precomputed 3D fbm noise using {@link programFbm}.
+ */
 export const fbmTexture = gl.createTexture()!;
 
 gl.bindTexture( GL_TEXTURE_2D, fbmTexture );

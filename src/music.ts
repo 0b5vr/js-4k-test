@@ -60,8 +60,15 @@ pixels.map( ( v, i ) => (
 let bufferSource: AudioBufferSourceNode;
 
 // -- play -----------------------------------------------------------------------------------------
+/**
+ * The {@link audio} realm time when the music starts.
+ * Set when {@link playMusic} is called.
+ */
 export let musicBeginTime: number;
 
+/**
+ * Starts playing the music.
+ */
 export function playMusic(): void {
   audio.resume();
 

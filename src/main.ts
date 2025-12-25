@@ -6,6 +6,9 @@ import { render } from './render';
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
+/**
+ * The main update loop.
+ */
 function update(): void {
   requestAnimationFrame( update );
   render();
