@@ -48,7 +48,11 @@ const pixels = new Float32Array(2 * MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_S
 gl.readPixels(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels);
 
 // -- audio ----------------------------------------------------------------------------------------
-const buffer = audio.createBuffer(2, MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT, sampleRate);
+const buffer = audio.createBuffer(
+  2,
+  MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT,
+  sampleRate,
+);
 const channels = [
   buffer.getChannelData(0),
   buffer.getChannelData(1),
@@ -61,50 +65,45 @@ let bufferSource: AudioBufferSourceNode;
 
 // -- play -----------------------------------------------------------------------------------------
 /**
- * The {@link audio} realm time when the music starts.
- * Set when {@link playMusic} is called.
- */
-export let musicBeginTime: number;
-
-/**
  * Starts playing the music.
  */
 export function playMusic(): void {
   audio.resume();
 
-  musicBeginTime = audio.currentTime + START_DELAY; // delay 5 sec
-
   bufferSource = audio.createBufferSource();
   bufferSource.buffer = buffer;
 
   bufferSource.connect(audio.destination);
-  bufferSource.start(musicBeginTime);
+  bufferSource.start(START_DELAY);
 }
 
 // -- controls -------------------------------------------------------------------------------------
-if (import.meta.env.DEV) {
-  const seek = (): void => {
-    bufferSource.stop();
+/**
+ * The {@link audio} realm time when the music begins playing.
+ * This variable will be modified when we seek.
+ *
+ * Dev only variable. Do not use this in prod realm.
+ */
+export let devMusicBeginTime = START_DELAY;
 
-    const offset = audio.currentTime - musicBeginTime;
+if (import.meta.env.DEV) {
+  const seek = (diff: number): void => {
+    bufferSource.stop();
 
     bufferSource = audio.createBufferSource();
     bufferSource.buffer = buffer;
 
+    devMusicBeginTime = Math.min(devMusicBeginTime - diff, audio.currentTime);
+    const offset = audio.currentTime - devMusicBeginTime;
     bufferSource.connect(audio.destination);
-    bufferSource.start(
-      audio.currentTime + Math.max(0.0, -offset),
-      Math.max(0.0, offset),
-    );
+    bufferSource.start(audio.currentTime, offset);
   };
 
   window.addEventListener('keydown', ({ key }) => {
     if (key === 'ArrowLeft') {
-      musicBeginTime += 1.0;
-      seek();
+      seek(-1.0);
     } else if (key === 'ArrowRight') {
-      musicBeginTime -= 1.0;
-      seek();
+      seek(1.0);
     }
   });
 }
@@ -136,25 +135,21 @@ if (import.meta.hot) {
     gl.viewport(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT);
     gl.drawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    // -- read pixels ----------------------------------------------------------------------------------
+    // -- read pixels ------------------------------------------------------------------------------
     gl.readPixels(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels);
 
-    // -- audio ----------------------------------------------------------------------------------------
+    // -- audio ------------------------------------------------------------------------------------
     pixels.map((v, i) => (
       channels[i % 2][~~(i / 2)] = v
     ));
 
     bufferSource.stop();
 
-    const offset = audio.currentTime - musicBeginTime;
-
     bufferSource = audio.createBufferSource();
     bufferSource.buffer = buffer;
 
+    const offset = audio.currentTime - devMusicBeginTime;
     bufferSource.connect(audio.destination);
-    bufferSource.start(
-      audio.currentTime + Math.max(0.0, -offset),
-      Math.max(0.0, offset),
-    );
+    bufferSource.start(audio.currentTime, offset);
   });
 }

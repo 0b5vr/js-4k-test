@@ -4,7 +4,7 @@ import { INTRO_LENGTH, STOP_RENDERING_AFTER_END } from './config';
 import { audio } from './audio';
 import { fbmTexture } from './fbmTexture';
 import { gl } from './gl';
-import { musicBeginTime } from './music';
+import { devMusicBeginTime } from './music';
 import { programRaymarch } from './programRaymarch';
 
 let programRaymarchHot = programRaymarch;
@@ -13,7 +13,11 @@ let programRaymarchHot = programRaymarch;
  * Renders the main scene.
  */
 export function render(): void {
-  const time = audio.currentTime - musicBeginTime;
+  let time = audio.currentTime;
+
+  if (import.meta.env.DEV) {
+    time -= devMusicBeginTime;
+  }
 
   // prevent using a GPU after the content ends
   if (STOP_RENDERING_AFTER_END) {
