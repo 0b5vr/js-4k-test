@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@0b5vr/experimental@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@0b5vr/experimental/-/experimental-0.9.0.tgz#2bc608f67fd8162ba1f6f25a7f68382da4ca297f"
-  integrity sha512-8lxOBUILVYJv8CYJj+cL6q55gEYDHMY6XYHMZ960bxYQRK1EVJsg1S6nVN/ZjtjszT9ots876TNxingPDoD5cw==
+"@0b5vr/experimental@^0.9.7":
+  version "0.9.7"
+  resolved "https://registry.yarnpkg.com/@0b5vr/experimental/-/experimental-0.9.7.tgz#a87f04c80787c918ca06e1dad2df8368a4c4399e"
+  integrity sha512-xJNz5YBGgOHBlkeYQfEJdAFFxhgYKt2CFmSRHsxuZU0XxaxgHyyrSPB+QwF8dbFTjkd+vNu/iR5ywEipodOtFA==
 
 "@esbuild/aix-ppc64@0.27.2":
   version "0.27.2"
