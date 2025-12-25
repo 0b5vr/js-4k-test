@@ -1,9 +1,10 @@
-import { GL_COLOR_ATTACHMENT0, GL_FLOAT, GL_FRAMEBUFFER, GL_RG, GL_RG32F, GL_TEXTURE0, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from './gl-constants';
+import { GL_COLOR_ATTACHMENT0, GL_FLOAT, GL_FRAMEBUFFER, GL_RG, GL_RG32F, GL_TEXTURE0, GL_TEXTURE1, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from './gl-constants';
 import { MUSIC_BUFFER_SIZE_SQRT, START_DELAY } from './config';
 import { audio, sampleRate } from './audio';
 import { textureFbm } from './textureFbm';
 import { gl } from './gl';
 import { programMusic } from './programMusic';
+import { textureAmen } from './textureAmen';
 
 // -- texture --------------------------------------------------------------------------------------
 const texture = gl.createTexture()!;
@@ -27,17 +28,27 @@ gl.framebufferTexture2D(
 gl.useProgram(programMusic);
 
 // -- uniforms -------------------------------------------------------------------------------------
-gl.activeTexture(GL_TEXTURE0);
-gl.bindTexture(GL_TEXTURE_2D, textureFbm);
+function setUniforms() {
+  gl.activeTexture(GL_TEXTURE0);
+  gl.bindTexture(GL_TEXTURE_2D, textureFbm);
 
-gl.uniform1f(
-  gl.getUniformLocation(programMusic, 'r'),
-  sampleRate,
-);
-gl.uniform1i(
-  gl.getUniformLocation(programMusic, 'f'),
-  0,
-);
+  gl.activeTexture(GL_TEXTURE1);
+  gl.bindTexture(GL_TEXTURE_2D, textureAmen);
+
+  gl.uniform1f(
+    gl.getUniformLocation(programMusic, 'r'),
+    sampleRate,
+  );
+  gl.uniform1i(
+    gl.getUniformLocation(programMusic, 'f'),
+    0,
+  );
+  gl.uniform1i(
+    gl.getUniformLocation(programMusic, 'a'),
+    1,
+  );
+}
+setUniforms();
 
 // -- render ---------------------------------------------------------------------------------------
 gl.viewport(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT);
@@ -118,17 +129,7 @@ if (import.meta.hot) {
     gl.useProgram(programMusic);
 
     // -- uniforms ---------------------------------------------------------------------------------
-    gl.activeTexture(GL_TEXTURE0);
-    gl.bindTexture(GL_TEXTURE_2D, textureFbm);
-
-    gl.uniform1f(
-      gl.getUniformLocation(programMusic, 'r'),
-      sampleRate,
-    );
-    gl.uniform1i(
-      gl.getUniformLocation(programMusic, 'f'),
-      0,
-    );
+    setUniforms();
 
     // -- render -----------------------------------------------------------------------------------
     gl.bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
