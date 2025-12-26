@@ -28,27 +28,24 @@ gl.framebufferTexture2D(
 gl.useProgram(programMusic);
 
 // -- uniforms -------------------------------------------------------------------------------------
-function setUniforms() {
-  gl.activeTexture(GL_TEXTURE0);
-  gl.bindTexture(GL_TEXTURE_2D, textureFbm);
+gl.activeTexture(GL_TEXTURE0);
+gl.bindTexture(GL_TEXTURE_2D, textureFbm);
 
-  gl.activeTexture(GL_TEXTURE1);
-  gl.bindTexture(GL_TEXTURE_2D, textureAmen);
+gl.activeTexture(GL_TEXTURE1);
+gl.bindTexture(GL_TEXTURE_2D, textureAmen);
 
-  gl.uniform1f(
-    gl.getUniformLocation(programMusic, 'r'),
-    sampleRate,
-  );
-  gl.uniform1i(
-    gl.getUniformLocation(programMusic, 'f'),
-    0,
-  );
-  gl.uniform1i(
-    gl.getUniformLocation(programMusic, 'a'),
-    1,
-  );
-}
-setUniforms();
+gl.uniform1f(
+  gl.getUniformLocation(programMusic, 'r'),
+  sampleRate,
+);
+gl.uniform1i(
+  gl.getUniformLocation(programMusic, 'f'),
+  0,
+);
+gl.uniform1i(
+  gl.getUniformLocation(programMusic, 'a'),
+  1,
+);
 
 // -- render ---------------------------------------------------------------------------------------
 gl.viewport(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT);
@@ -129,7 +126,24 @@ if (import.meta.hot) {
     gl.useProgram(programMusic);
 
     // -- uniforms ---------------------------------------------------------------------------------
-    setUniforms();
+    gl.activeTexture(GL_TEXTURE0);
+    gl.bindTexture(GL_TEXTURE_2D, textureFbm);
+
+    gl.activeTexture(GL_TEXTURE1);
+    gl.bindTexture(GL_TEXTURE_2D, textureAmen);
+
+    gl.uniform1f(
+      gl.getUniformLocation(programMusic, 'r'),
+      sampleRate,
+    );
+    gl.uniform1i(
+      gl.getUniformLocation(programMusic, 'f'),
+      0,
+    );
+    gl.uniform1i(
+      gl.getUniformLocation(programMusic, 'a'),
+      1,
+    );
 
     // -- render -----------------------------------------------------------------------------------
     gl.bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
