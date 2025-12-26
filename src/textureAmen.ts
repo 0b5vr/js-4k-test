@@ -3,16 +3,8 @@ import { gl } from './gl';
 import amenOpus from './assets/amen.opus?inline';
 import { audio } from './audio';
 
-// -- texture --------------------------------------------------------------------------------------
 const width = 4096;
 const height = 4;
-
-/**
- * The 2D texture containing the sample of amen breaks.
- */
-export const textureAmen = gl.createTexture()!;
-
-gl.bindTexture(GL_TEXTURE_2D, textureAmen);
 
 // -- load sample ----------------------------------------------------------------------------------
 const res = await fetch(amenOpus);
@@ -24,6 +16,12 @@ const channelData = audioBuffer.getChannelData(0); // mono
 const array = new Float32Array(width * height);
 array.set(channelData);
 
+/**
+ * The 2D texture containing the sample of amen breaks.
+ */
+export const textureAmen = gl.createTexture()!;
+
+gl.bindTexture(GL_TEXTURE_2D, textureAmen);
 gl.texImage2D(
   GL_TEXTURE_2D, // target
   0, // level
