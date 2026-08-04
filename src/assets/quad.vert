@@ -5,5 +5,5 @@ out vec2 v;
 
 void main() {
   v = p;
-  gl_Position = vec4( p, 0, 1 );
+  gl_Position = vec4(p, 0, 1);
 }
