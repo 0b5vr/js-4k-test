@@ -1,4 +1,4 @@
-import { GL_FLOAT, GL_LINEAR, GL_R32F, GL_RED, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER } from './gl-constants';
+import { GL_FLOAT, GL_LINEAR, GL_R32F, GL_RED, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER } from './gl-constants';
 import { gl } from './gl';
 import amenOpus from './assets/amen.opus?inline';
 import { audio } from './audio';
@@ -35,7 +35,7 @@ gl.texImage2D(
 );
 
 gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+// GL_TEXTURE_MAG_FILTER defaults to GL_LINEAR already, no need to set it
 
 // -- export the texture? --------------------------------------------------------------------------
 // if (import.meta.env.DEV) {
