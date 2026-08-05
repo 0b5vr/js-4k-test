@@ -102,7 +102,7 @@ export const shaderMinifierPlugin: (
           await fs.promises.writeFile(pathOriginal, src, { encoding: 'utf8' });
 
           return await tempy.temporaryFileTask(async (pathMinified) => {
-            const command = `shader_minifier.exe ${pathOriginal} ${minifierOptionsString}-o ${pathMinified}`;
+            const command = `shader_minifier ${pathOriginal} ${minifierOptionsString}-o ${pathMinified}`;
 
             await exec(command).catch((error) => {
               throw new Error(error.stdout);

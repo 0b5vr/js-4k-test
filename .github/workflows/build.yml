@@ -6,6 +6,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  SHADER_MINIFIER_VERSION: 1.6.0
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,6 +19,18 @@ jobs:
 
       - name: init stuff
         uses: ./.github/actions/init
+
+      - name: build shader-minifier
+        uses: ./.github/actions/build-shader-minifier
+        with:
+          version: ${{ env.SHADER_MINIFIER_VERSION }}
+          output: shader-minifier-dist
+
+      - name: install shader-minifier binary
+        run: |
+          cp shader-minifier-dist/ShaderMinifier bin/shader_minifier
+          chmod +x bin/shader_minifier
+          echo "$GITHUB_WORKSPACE/bin" >> "$GITHUB_PATH"
 
       - name: build
         run: pnpm build

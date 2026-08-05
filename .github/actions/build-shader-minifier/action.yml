@@ -1,0 +1,41 @@
+name: Build shader-minifier
+description: Build (or restore from cache) shader-minifier as a native linux-x64 binary
+
+inputs:
+  version:
+    description: Git tag of laurentlb/shader-minifier to build
+    required: true
+  output:
+    description: Directory to place the built binary into
+    required: true
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: cache
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.output }}
+        key: shader-minifier-${{ inputs.version }}-${{ runner.os }}
+
+    - name: setup dotnet
+      if: steps.cache.outputs.cache-hit != 'true'
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: clone shader-minifier
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        git clone --branch "${{ inputs.version }}" --depth 1 https://github.com/laurentlb/shader-minifier.git /tmp/shader-minifier-src
+
+    - name: publish
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        dotnet publish /tmp/shader-minifier-src/ShaderMinifier/ShaderMinifier.fsproj \
+          -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true \
+          -o "${{ inputs.output }}"
