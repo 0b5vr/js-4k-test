@@ -1,0 +1,33 @@
+name: Init
+description: Setup Node.js, pnpm, Deno and install dependencies
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: setup pnpm
+      uses: pnpm/action-setup@v6
+      with:
+        version: 11.20.0
+        run_install: false
+
+    - name: setup node
+      uses: actions/setup-node@v6
+      with:
+        node-version-file: './.node-version'
+        cache: 'pnpm'
+
+    - name: setup deno
+      uses: denoland/setup-deno@v2
+      with:
+        deno-version: v2.x
+
+    - name: install zopfli
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y zopfli
+
+    - name: fetch deps
+      shell: bash
+      run: pnpm install --frozen-lockfile

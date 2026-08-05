@@ -1,0 +1,27 @@
+name: Build
+
+on: push
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+
+      - name: init stuff
+        uses: ./.github/actions/init
+
+      - name: build
+        run: pnpm build
+
+      - name: upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: ./dist
