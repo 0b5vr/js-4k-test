@@ -50,6 +50,14 @@ export const LOG_SHADER_ERRORS = import.meta.env.DEV;
  */
 export const ENABLE_SEEKING = import.meta.env.DEV;
 
+/**
+ * Whether to enter fullscreen mode when the user clicks the start button.
+ *
+ * Fullscreen mode has much smaller footprint compared to the windowed one,
+ * so it's recommended to set this to `true` in the prod build.
+ */
+export const FULLSCREEN = !import.meta.env.DEV;
+
 // == the despair zone =============================================================================
 
 /**
