@@ -13,8 +13,8 @@ const float TAU = 2.0 * PI;
 const float BPS = 128.0 / 60.0;
 const float B2T = 1.0 / BPS;
 
-uniform sampler2D f;
-uniform sampler2D a;
+uniform sampler2D F;
+uniform sampler2D A;
 
 out vec2 dest;
 
@@ -73,8 +73,8 @@ void main() {
     vec2 uv = cis(360.0 * t) + 34.0 * t;
 
     dest += 0.2 * tanh(20.0 * env * (vec2(
-      texture(f, uv).x,
-      texture(f, uv + 0.05).x
+      texture(F, uv).x,
+      texture(F, uv + 0.05).x
     )));
   }
 
@@ -86,8 +86,8 @@ void main() {
       (float(slices[int(2.0 * time.y / B2T) % 8]) + 0.5) / 4.0
     );
     vec2 wave = vec2(
-      texture(a, uv + vec2(0.01 * sin(10.0 * time.w), 0)).x,
-      texture(a, uv + vec2(0.01 * sin(10.0 * time.w), 0) * -1.0).x
+      texture(A, uv + vec2(0.01 * sin(10.0 * time.w), 0)).x,
+      texture(A, uv + vec2(0.01 * sin(10.0 * time.w), 0) * -1.0).x
     );
     dest += 0.4 * wave;
   }
