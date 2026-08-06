@@ -1,7 +1,7 @@
 import { GL_FLOAT, GL_LINEAR, GL_R32F, GL_RED, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER } from './gl-constants';
+import { MUSIC_SAMPLE_RATE } from './config';
 import { gl } from './gl';
 import amenOpus from './assets/amen.opus?inline';
-import { audio } from './audio';
 
 const width = 4096;
 const height = 4;
@@ -9,7 +9,11 @@ const height = 4;
 // -- load sample ----------------------------------------------------------------------------------
 const res = await fetch(amenOpus);
 const arrayBuffer = await res.arrayBuffer();
-const audioBuffer = await audio.decodeAudioData(arrayBuffer);
+
+// decode the audio data using a dedicated OfflineAudioContext fixed to MUSIC_SAMPLE_RATE,
+// instead of the live `audio` context, whose sample rate depends on the playback environment
+// and would otherwise resample the sample unpredictably (shifting its pitch/timing)
+const audioBuffer = await new OfflineAudioContext(1, 1, MUSIC_SAMPLE_RATE).decodeAudioData(arrayBuffer);
 
 // -- convert to texture ---------------------------------------------------------------------------
 const channelData = audioBuffer.getChannelData(0); // mono
