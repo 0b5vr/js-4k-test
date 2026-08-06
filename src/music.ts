@@ -65,21 +65,11 @@ pixels.map((v, i) => (
   channels[i % 2][~~(i / 2)] = v
 ));
 
-let bufferSource: AudioBufferSourceNode;
+let bufferSource = audio.createBufferSource();
+bufferSource.buffer = buffer;
 
-// -- play -----------------------------------------------------------------------------------------
-/**
- * Starts playing the music.
- */
-export function playMusic(): void {
-  audio.resume();
-
-  bufferSource = audio.createBufferSource();
-  bufferSource.buffer = buffer;
-
-  bufferSource.connect(audio.destination);
-  bufferSource.start(START_DELAY);
-}
+bufferSource.connect(audio.destination);
+bufferSource.start(START_DELAY);
 
 // -- controls -------------------------------------------------------------------------------------
 /**

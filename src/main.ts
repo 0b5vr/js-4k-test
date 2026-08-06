@@ -1,7 +1,7 @@
 import { HEIGHT, WIDTH } from './constants';
 import { button, canvas } from './ui';
-import { playMusic } from './music';
 import { render } from './render';
+import { audio } from './audio';
 
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
@@ -16,6 +16,6 @@ function update(): void {
 
 button.onclick = () => {
   canvas.requestFullscreen();
-  playMusic();
+  audio.resume();
   update();
 };
