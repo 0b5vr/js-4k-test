@@ -34,6 +34,22 @@ export const MUSIC_SAMPLE_RATE = 48000;
  */
 export const MUSIC_BUFFER_SIZE_SQRT = 4096;
 
+// == dev stuff ====================================================================================
+
+/**
+ * Whether to log shader compilation errors to the console.
+ *
+ * This obviously increases the size of the final build.
+ */
+export const LOG_SHADER_ERRORS = import.meta.env.DEV;
+
+/**
+ * Whether to enable seeking in dev mode.
+ *
+ * This obviously increases the size of the final build.
+ */
+export const ENABLE_SEEKING = import.meta.env.DEV;
+
 // == the despair zone =============================================================================
 
 /**

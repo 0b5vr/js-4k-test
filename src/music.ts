@@ -1,5 +1,5 @@
 import { GL_COLOR_ATTACHMENT0, GL_FLOAT, GL_FRAMEBUFFER, GL_RG, GL_RG32F, GL_TEXTURE0, GL_TEXTURE1, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from './gl-constants';
-import { MUSIC_BUFFER_SIZE_SQRT, MUSIC_SAMPLE_RATE, START_DELAY } from './config';
+import { ENABLE_SEEKING, MUSIC_BUFFER_SIZE_SQRT, MUSIC_SAMPLE_RATE, START_DELAY } from './config';
 import { audio } from './audio';
 import { textureFbm } from './textureFbm';
 import { gl } from './gl';
@@ -76,19 +76,20 @@ bufferSource.start(START_DELAY);
  * The {@link audio} realm time when the music begins playing.
  * This variable will be modified when we seek.
  *
- * Dev only variable. Do not use this in prod realm.
+ * The value of this variable is only meaningful when {@link ENABLE_SEEKING} is `true`.
+ * Do not use this variable outside of the `ENABLE_SEEKING` block for the sake of tree-shaking.
  */
-export let devMusicBeginTime = START_DELAY;
+export let seekBeginTime = START_DELAY;
 
-if (import.meta.env.DEV) {
+if (ENABLE_SEEKING) {
   const seek = (diff: number): void => {
     bufferSource.stop();
 
     bufferSource = audio.createBufferSource();
     bufferSource.buffer = buffer;
 
-    devMusicBeginTime = Math.min(devMusicBeginTime - diff, audio.currentTime);
-    const offset = audio.currentTime - devMusicBeginTime;
+    seekBeginTime = Math.min(seekBeginTime - diff, audio.currentTime);
+    const offset = audio.currentTime - seekBeginTime;
     bufferSource.connect(audio.destination);
     bufferSource.start(audio.currentTime, offset);
   };
@@ -145,7 +146,7 @@ if (import.meta.hot) {
     bufferSource = audio.createBufferSource();
     bufferSource.buffer = buffer;
 
-    const offset = audio.currentTime - devMusicBeginTime;
+    const offset = audio.currentTime - seekBeginTime;
     bufferSource.connect(audio.destination);
     bufferSource.start(audio.currentTime, offset);
   });

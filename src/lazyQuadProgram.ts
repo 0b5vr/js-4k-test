@@ -2,6 +2,7 @@ import { GL_ARRAY_BUFFER, GL_COMPILE_STATUS, GL_FLOAT, GL_FRAGMENT_SHADER, GL_LI
 import { bufferP } from './bufferP';
 import { gl } from './gl';
 import quadVert from './assets/quad.vert?shader';
+import { LOG_SHADER_ERRORS } from './config';
 
 /**
  * Simply receives a fragment shader source and returns a WebGLProgram that renders a full-screen quad.
@@ -13,7 +14,7 @@ export function lazyQuadProgram(frag: string): WebGLProgram {
   gl.shaderSource(vertexShader, quadVert);
   gl.compileShader(vertexShader);
 
-  if (import.meta.env.DEV) {
+  if (LOG_SHADER_ERRORS) {
     if (!gl.getShaderParameter(vertexShader, GL_COMPILE_STATUS)) {
       console.error(quadVert);
       throw new Error(gl.getShaderInfoLog(vertexShader) ?? undefined);
@@ -26,7 +27,7 @@ export function lazyQuadProgram(frag: string): WebGLProgram {
   gl.shaderSource(fragmentShader, frag);
   gl.compileShader(fragmentShader);
 
-  if (import.meta.env.DEV) {
+  if (LOG_SHADER_ERRORS) {
     if (!gl.getShaderParameter(fragmentShader, GL_COMPILE_STATUS)) {
       console.error(frag);
       throw new Error(gl.getShaderInfoLog(fragmentShader) ?? undefined);
@@ -41,7 +42,7 @@ export function lazyQuadProgram(frag: string): WebGLProgram {
 
   gl.linkProgram(program);
 
-  if (import.meta.env.DEV) {
+  if (LOG_SHADER_ERRORS) {
     if (!gl.getProgramParameter(program!, GL_LINK_STATUS)) {
       throw new Error(gl.getProgramInfoLog(program!) ?? undefined);
     }
