@@ -6,16 +6,17 @@ precision highp float;
 
 // #pragma shader_minifier_plugin bypass
 
-uniform float r;
-uniform sampler2D f;
-uniform sampler2D a;
-
-out vec2 dest;
+const float SAMPLE_RATE = 48000.0;
 
 const float PI = acos(-1.0);
 const float TAU = 2.0 * PI;
 const float BPS = 128.0 / 60.0;
 const float B2T = 1.0 / BPS;
+
+uniform sampler2D f;
+uniform sampler2D a;
+
+out vec2 dest;
 
 vec2 cis(float t) {
   return vec2(cos(t), sin(t));
@@ -40,9 +41,9 @@ void main() {
   dest = vec2(0.0); // you might want to ditch this
 
   uint sampleIndex = uint(gl_FragCoord.x) + 4096u * uint(gl_FragCoord.y);
-  float wholeTime = float(sampleIndex) / r;
-  uvec4 moddedIndex = sampleIndex % uvec4(r * B2T * vec4(1u, 4u, 16u, 64u));
-  vec4 time = vec4(moddedIndex) / r;
+  float wholeTime = float(sampleIndex) / SAMPLE_RATE;
+  uvec4 moddedIndex = sampleIndex % uvec4(SAMPLE_RATE * B2T * vec4(1u, 4u, 16u, 64u));
+  vec4 time = vec4(moddedIndex) / SAMPLE_RATE;
 
   if (time.w < 61.0 * B2T) { // kick
     float t = time.x;

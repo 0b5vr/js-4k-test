@@ -15,9 +15,18 @@ export const INTRO_LENGTH = 60;
 export const START_DELAY = 5;
 
 /**
+ * The sample rate the music is generated at.
+ * This is a constant value regardless of the playback environment's sample rate.
+ *
+ * The generated {@link AudioBuffer} is created with this sample rate,
+ * and the browser will automatically resample it to match the {@link AudioContext}'s sample rate on playback.
+ */
+export const MUSIC_SAMPLE_RATE = 48000;
+
+/**
  * Specify the square root of size of music buffer.
  *
- * `MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT / sampleRate` will be the length in seconds you have in your music.
+ * `MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT / MUSIC_SAMPLE_RATE` will be the length in seconds you have in your music.
  *
  * - `1024` == 1048576 samples == 21.845 sec in 48000Hz
  * - `2048` == 4194304 samples == 87.381 sec in 48000Hz
