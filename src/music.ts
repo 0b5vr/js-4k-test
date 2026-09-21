@@ -5,7 +5,7 @@ import { exportWav } from './utils/exportWav';
 import { textureFbm } from './textureFbm';
 import { gl } from './gl';
 import { programMusic } from './programMusic';
-import { promiseTextureAmen } from './textureAmen';
+import { promiseTextureAmen } from './promiseTextureAmen';
 
 // -- texture --------------------------------------------------------------------------------------
 const texture = gl.createTexture()!;
