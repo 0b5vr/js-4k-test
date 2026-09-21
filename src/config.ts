@@ -12,7 +12,7 @@ export const INTRO_LENGTH = 60;
  * Chrome shows the "Press Esc to exit full screen" dialog after you enter fullscreen for 5 sec,
  * so it's recommended to leave it to be `5`.
  */
-export const START_DELAY = 5;
+export const START_DELAY = import.meta.env.DEV ? 0 : 5;
 
 /**
  * The sample rate the music is generated at.
