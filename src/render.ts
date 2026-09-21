@@ -1,6 +1,6 @@
 import { GL_FRAMEBUFFER, GL_TEXTURE0, GL_TEXTURE_2D, GL_TRIANGLES } from './gl-constants';
 import { HEIGHT, WIDTH } from './constants';
-import { ENABLE_SEEKING, INTRO_LENGTH, START_DELAY, STOP_RENDERING_AFTER_END } from './config';
+import { ENABLE_SEEKING, INTRO_LENGTH, START_DELAY, STOP_RENDERING_AFTER_END, STOP_RENDERING_BEFORE_START } from './config';
 import { audio } from './audio';
 import { textureFbm } from './textureFbm';
 import { gl } from './gl';
@@ -16,6 +16,11 @@ export function render(): void {
   const time = ENABLE_SEEKING
     ? audio.currentTime - seekBeginTime
     : audio.currentTime - START_DELAY;
+
+  // prevent using a GPU before the content starts
+  if (STOP_RENDERING_BEFORE_START) {
+    if (time < 0) { return; }
+  }
 
   // prevent using a GPU after the content ends
   if (STOP_RENDERING_AFTER_END) {

@@ -68,6 +68,14 @@ export const EXPORT_WAV = false;
 // == the despair zone =============================================================================
 
 /**
+ * Stop rendering before the time reaches `0`.
+ *
+ * You can save several bytes if you set this to `false`,
+ * but the `render()` function will be called even before the demo starts, which probably causes error messages in the console.
+ */
+export const STOP_RENDERING_BEFORE_START = true;
+
+/**
  * Stop rendering after the time exceeds {@link INTRO_LENGTH}.
  *
  * You can save several bytes if you set this to `false`,
