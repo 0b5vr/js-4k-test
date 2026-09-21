@@ -1,4 +1,4 @@
-import { GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER, GL_R32F, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from './gl-constants';
+import { GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER, GL_R32F, GL_TEXTURE_2D, GL_TRIANGLES } from './gl-constants';
 import { gl } from './gl';
 import { programFbm } from './programFbm';
 
@@ -30,4 +30,4 @@ gl.useProgram(programFbm);
 
 // -- render ---------------------------------------------------------------------------------------
 gl.viewport(0, 0, SIZE, SIZE);
-gl.drawArrays(GL_TRIANGLE_STRIP, 0, 4);
+gl.drawArrays(GL_TRIANGLES, 0, 3);

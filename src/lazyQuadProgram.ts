@@ -1,5 +1,4 @@
-import { GL_ARRAY_BUFFER, GL_COMPILE_STATUS, GL_FLOAT, GL_FRAGMENT_SHADER, GL_LINK_STATUS, GL_VERTEX_SHADER } from './gl-constants';
-import { bufferP } from './bufferP';
+import { GL_COMPILE_STATUS, GL_FRAGMENT_SHADER, GL_LINK_STATUS, GL_VERTEX_SHADER } from './gl-constants';
 import { gl } from './gl';
 import quadVert from './assets/quad.vert?shader';
 import { LOG_SHADER_ERRORS } from './config';
@@ -47,13 +46,6 @@ export function lazyQuadProgram(frag: string): WebGLProgram {
       throw new Error(gl.getProgramInfoLog(program!) ?? undefined);
     }
   }
-
-  // -- assign attrib in prior ---------------------------------------------------------------------
-  const attribLocation = gl.getAttribLocation(program, 'p');
-
-  gl.bindBuffer(GL_ARRAY_BUFFER, bufferP);
-  gl.enableVertexAttribArray(attribLocation);
-  gl.vertexAttribPointer(attribLocation, 2, GL_FLOAT, false, 0, 0);
 
   // -- return -------------------------------------------------------------------------------------
   return program;

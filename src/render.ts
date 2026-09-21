@@ -1,4 +1,4 @@
-import { GL_FRAMEBUFFER, GL_TEXTURE0, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from './gl-constants';
+import { GL_FRAMEBUFFER, GL_TEXTURE0, GL_TEXTURE_2D, GL_TRIANGLES } from './gl-constants';
 import { HEIGHT, WIDTH } from './constants';
 import { ENABLE_SEEKING, INTRO_LENGTH, START_DELAY, STOP_RENDERING_AFTER_END } from './config';
 import { audio } from './audio';
@@ -37,7 +37,7 @@ export function render(): void {
   // -- render -------------------------------------------------------------------------------------
   gl.bindFramebuffer(GL_FRAMEBUFFER, null);
   gl.viewport(0, 0, WIDTH, HEIGHT);
-  gl.drawArrays(GL_TRIANGLE_STRIP, 0, 4);
+  gl.drawArrays(GL_TRIANGLES, 0, 3);
 }
 
 // -- hot ------------------------------------------------------------------------------------------
