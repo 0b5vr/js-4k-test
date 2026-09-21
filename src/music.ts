@@ -5,7 +5,7 @@ import { exportWav } from './utils/exportWav';
 import { textureFbm } from './textureFbm';
 import { gl } from './gl';
 import { programMusic } from './programMusic';
-import { textureAmen } from './textureAmen';
+import { promiseTextureAmen } from './textureAmen';
 
 // -- texture --------------------------------------------------------------------------------------
 const texture = gl.createTexture()!;
@@ -25,29 +25,6 @@ gl.framebufferTexture2D(
   0,
 );
 
-// -- program --------------------------------------------------------------------------------------
-gl.useProgram(programMusic);
-
-// -- uniforms -------------------------------------------------------------------------------------
-gl.activeTexture(GL_TEXTURE0);
-gl.bindTexture(GL_TEXTURE_2D, textureFbm);
-
-gl.activeTexture(GL_TEXTURE1);
-gl.bindTexture(GL_TEXTURE_2D, textureAmen);
-
-gl.uniform1i(
-  gl.getUniformLocation(programMusic, 'A'),
-  1,
-);
-
-// -- render ---------------------------------------------------------------------------------------
-gl.viewport(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT);
-gl.drawArrays(GL_TRIANGLES, 0, 3);
-
-// -- read pixels ----------------------------------------------------------------------------------
-const pixels = new Float32Array(2 * MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT);
-gl.readPixels(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels);
-
 // -- audio ----------------------------------------------------------------------------------------
 const buffer = audio.createBuffer(
   2,
@@ -58,19 +35,49 @@ const channels = [
   buffer.getChannelData(0),
   buffer.getChannelData(1),
 ];
-pixels.map((v, i) => (
-  channels[i % 2][~~(i / 2)] = v
-));
-
-if (EXPORT_WAV) {
-  exportWav(channels, MUSIC_SAMPLE_RATE);
-}
+const pixels = new Float32Array(2 * MUSIC_BUFFER_SIZE_SQRT * MUSIC_BUFFER_SIZE_SQRT);
 
 let bufferSource = audio.createBufferSource();
 bufferSource.buffer = buffer;
-
 bufferSource.connect(audio.destination);
-bufferSource.start(START_DELAY);
+
+// -- render ---------------------------------------------------------------------------------------
+// the amen sample is loaded asynchronously, so we have to wait for it before rendering the music
+promiseTextureAmen.then((textureAmen) => {
+  // -- program ----------------------------------------------------------------------------------
+  gl.useProgram(programMusic);
+
+  // -- uniforms ---------------------------------------------------------------------------------
+  gl.activeTexture(GL_TEXTURE0);
+  gl.bindTexture(GL_TEXTURE_2D, textureFbm);
+
+  gl.activeTexture(GL_TEXTURE1);
+  gl.bindTexture(GL_TEXTURE_2D, textureAmen);
+
+  gl.uniform1i(
+    gl.getUniformLocation(programMusic, 'A'),
+    1,
+  );
+
+  // -- render -----------------------------------------------------------------------------------
+  gl.bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+  gl.viewport(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT);
+  gl.drawArrays(GL_TRIANGLES, 0, 3);
+
+  // -- read pixels ------------------------------------------------------------------------------
+  gl.readPixels(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels);
+
+  // -- audio ------------------------------------------------------------------------------------
+  pixels.map((v, i) => (
+    channels[i % 2][~~(i / 2)] = v
+  ));
+
+  if (EXPORT_WAV) {
+    exportWav(channels, MUSIC_SAMPLE_RATE);
+  }
+
+  bufferSource.start(START_DELAY);
+});
 
 // -- controls -------------------------------------------------------------------------------------
 /**
@@ -129,9 +136,10 @@ if (ENABLE_SEEKING) {
 
 // -- hot ------------------------------------------------------------------------------------------
 if (import.meta.hot) {
-  import.meta.hot.accept('./programMusic', (mod) => {
+  import.meta.hot.accept('./programMusic', async (mod) => {
     if (mod == null) { return; }
     const { programMusic } = mod;
+    const textureAmen = await promiseTextureAmen;
 
     // -- program ----------------------------------------------------------------------------------
     gl.useProgram(programMusic);
