@@ -18,7 +18,10 @@ export interface ShaderMinifierOptions {
   noRenaming?: boolean;
   noRenamingList?: string[];
   noSequence?: boolean;
-  smoothstep?: boolean;
+  noRemoveUnused?: boolean;
+  noOverloading?: boolean;
+  moveDeclarations?: boolean;
+  preprocess?: boolean;
 }
 
 function buildMinifierOptionsString(options: ShaderMinifierOptions): string {
@@ -62,8 +65,20 @@ function buildMinifierOptionsString(options: ShaderMinifierOptions): string {
     str += '--no-sequence ';
   }
 
-  if (options.smoothstep) {
-    str += '--smoothstep ';
+  if (options.noRemoveUnused) {
+    str += '--no-remove-unused ';
+  }
+
+  if (options.noOverloading) {
+    str += '--no-overloading ';
+  }
+
+  if (options.moveDeclarations) {
+    str += '--move-declarations ';
+  }
+
+  if (options.preprocess) {
+    str += '--preprocess ';
   }
 
   return str;
