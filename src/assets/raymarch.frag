@@ -4,10 +4,10 @@
 precision highp float;
 //]
 
-in vec2 v;
-
 uniform float t;
 uniform sampler2D f;
+
+in vec2 v;
 
 out vec4 outColor;
 

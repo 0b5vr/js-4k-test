@@ -6,17 +6,17 @@ precision highp float;
 
 // #pragma shader_minifier_plugin bypass
 
+uniform sampler2D F;
+uniform sampler2D A;
+
+out vec2 dest;
+
 const float SAMPLE_RATE = 48000.0;
 
 const float PI = acos(-1.0);
 const float TAU = 2.0 * PI;
 const float BPS = 128.0 / 60.0;
 const float B2T = 1.0 / BPS;
-
-uniform sampler2D F;
-uniform sampler2D A;
-
-out vec2 dest;
 
 vec2 cis(float t) {
   return vec2(cos(t), sin(t));
