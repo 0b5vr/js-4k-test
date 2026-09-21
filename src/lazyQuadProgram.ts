@@ -3,21 +3,36 @@ import { gl } from './gl';
 import quadVert from './assets/quad.vert?shader';
 import { LOG_SHADER_ERRORS } from './config';
 
+// -- vert -----------------------------------------------------------------------------------------
 /**
- * Simply receives a fragment shader source and returns a WebGLProgram that renders a full-screen quad.
+ * The `quad.vert` shader which is compiled once and reused for all programs
+ */
+const vertexShader = gl.createShader(GL_VERTEX_SHADER)!;
+
+gl.shaderSource(vertexShader, quadVert);
+gl.compileShader(vertexShader);
+
+if (LOG_SHADER_ERRORS) {
+  if (!gl.getShaderParameter(vertexShader, GL_COMPILE_STATUS)) {
+    console.error(quadVert);
+    throw new Error(gl.getShaderInfoLog(vertexShader) ?? undefined);
+  }
+}
+
+/**
+ * Programs already compiled in this session, keyed by their source string.
+ *
+ * DEV ONLY - will be eliminated in the prod build.
+ */
+const cache: Record<string, WebGLProgram> = {};
+
+/**
+ * Receives a fragment shader string and returns a WebGLProgram that renders the it.
  */
 export function lazyQuadProgram(frag: string): WebGLProgram {
-  // -- vert ---------------------------------------------------------------------------------------
-  const vertexShader = gl.createShader(GL_VERTEX_SHADER)!;
-
-  gl.shaderSource(vertexShader, quadVert);
-  gl.compileShader(vertexShader);
-
-  if (LOG_SHADER_ERRORS) {
-    if (!gl.getShaderParameter(vertexShader, GL_COMPILE_STATUS)) {
-      console.error(quadVert);
-      throw new Error(gl.getShaderInfoLog(vertexShader) ?? undefined);
-    }
+  if (import.meta.hot) {
+    // if the shader code is identical to a previous one, reuse the program from cache
+    if (cache[frag]) { return cache[frag]; }
   }
 
   // -- frag ---------------------------------------------------------------------------------------
@@ -28,8 +43,10 @@ export function lazyQuadProgram(frag: string): WebGLProgram {
 
   if (LOG_SHADER_ERRORS) {
     if (!gl.getShaderParameter(fragmentShader, GL_COMPILE_STATUS)) {
+      const log = gl.getShaderInfoLog(fragmentShader);
+      gl.deleteShader(fragmentShader);
       console.error(frag);
-      throw new Error(gl.getShaderInfoLog(fragmentShader) ?? undefined);
+      throw new Error(log ?? undefined);
     }
   }
 
@@ -43,10 +60,16 @@ export function lazyQuadProgram(frag: string): WebGLProgram {
 
   if (LOG_SHADER_ERRORS) {
     if (!gl.getProgramParameter(program!, GL_LINK_STATUS)) {
-      throw new Error(gl.getProgramInfoLog(program!) ?? undefined);
+      const log = gl.getProgramInfoLog(program!);
+      gl.deleteProgram(program);
+      throw new Error(log ?? undefined);
     }
   }
 
   // -- return -------------------------------------------------------------------------------------
+  if (import.meta.hot) {
+    cache[frag] = program;
+  }
+
   return program;
 }
