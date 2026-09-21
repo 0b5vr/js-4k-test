@@ -17,6 +17,24 @@ pnpm install
 pnpm build
 ```
 
+## Development
+
+```sh
+pnpm install
+pnpm dev
+```
+
+### Seeking (dev)
+
+These keyboard controls are available in the dev build:
+
+- `Space`: pause / resume
+- `←` / `→`: seek by 5s
+- `Shift` + `←` / `→`: seek by 60s
+- `Alt` + `←` / `→`: seek by one frame
+- `Home`: jump to the beginning
+- `End`: jump to the end
+
 ## License
 
 [CC BY-NC 4.0](./LICENSE)
