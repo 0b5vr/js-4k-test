@@ -42,6 +42,7 @@ export default defineConfig(({ mode }) => {
           preserveExternals: true,
           aggressiveInlining: true,
           noSequence: true,
+          noOverloading: true, // See: https://github.com/laurentlb/shader-minifier/issues/564
         },
       }),
       trimChunkPlugin(),
