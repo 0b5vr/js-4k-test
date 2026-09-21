@@ -1,11 +1,7 @@
-import { HEIGHT, WIDTH } from './constants';
 import { button, canvas } from './ui';
 import { render } from './render';
 import { audio } from './audio';
 import { FULLSCREEN } from './config';
-
-canvas.width = WIDTH;
-canvas.height = HEIGHT;
 
 /**
  * The main update loop.
