@@ -1,5 +1,5 @@
 import { GL_COLOR_ATTACHMENT0, GL_FLOAT, GL_FRAMEBUFFER, GL_RG, GL_RG32F, GL_TEXTURE0, GL_TEXTURE1, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from './gl-constants';
-import { ENABLE_SEEKING, MUSIC_BUFFER_SIZE_SQRT, MUSIC_SAMPLE_RATE, START_DELAY } from './config';
+import { ENABLE_SEEKING, INTRO_LENGTH, MUSIC_BUFFER_SIZE_SQRT, MUSIC_SAMPLE_RATE, START_DELAY } from './config';
 import { audio } from './audio';
 import { textureFbm } from './textureFbm';
 import { gl } from './gl';
@@ -77,24 +77,47 @@ bufferSource.start(START_DELAY);
  */
 export let seekBeginTime = START_DELAY;
 
+// Enable seeking with the arrow keys when `ENABLE_SEEKING` is `true`
 if (ENABLE_SEEKING) {
-  const seek = (diff: number): void => {
+  /**
+   * Seek to the specified time.
+   */
+  const seekTo = (time: number): void => {
     bufferSource.stop();
 
     bufferSource = audio.createBufferSource();
     bufferSource.buffer = buffer;
 
-    seekBeginTime = Math.min(seekBeginTime - diff, audio.currentTime);
+    seekBeginTime = Math.min(audio.currentTime - time, audio.currentTime);
     const offset = audio.currentTime - seekBeginTime;
     bufferSource.connect(audio.destination);
     bufferSource.start(audio.currentTime, offset);
   };
 
-  window.addEventListener('keydown', ({ key }) => {
-    if (key === 'ArrowLeft') {
-      seek(-1.0);
-    } else if (key === 'ArrowRight') {
-      seek(1.0);
+  /**
+   * Seek by the specified delta.
+   */
+  const seekBy = (delta: number): void => {
+    seekTo(audio.currentTime - seekBeginTime + delta);
+  };
+
+  window.addEventListener('keydown', (event) => {
+    let timeStep = 5.0;
+    if (event.shiftKey) { timeStep = 60.0; }
+    if (event.altKey) { timeStep = 1.0 / 60.0; }
+
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      seekBy(-timeStep);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      seekBy(timeStep);
+    } else if (event.key === 'Home') {
+      event.preventDefault();
+      seekTo(0.0);
+    } else if (event.key === 'End') {
+      event.preventDefault();
+      seekTo(INTRO_LENGTH);
     }
   });
 }
