@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@0b5vr/experimental':
-        specifier: ^0.9.7
-        version: 0.9.11
+        specifier: ^0.10.0
+        version: 0.10.0
       '@eslint/js':
         specifier: ^9.39.2
         version: 9.39.5
@@ -56,8 +56,8 @@ importers:
 
 packages:
 
-  '@0b5vr/experimental@0.9.11':
-    resolution: {integrity: sha512-mfmIJMCzERxDBZ1IjD0uWLyOlM7jk5qwAFgJLzw9aItjiuT3Zrt4MNiBscrYTWfivwL/b55cIm/OmY1uA0B0+g==}
+  '@0b5vr/experimental@0.10.0':
+    resolution: {integrity: sha512-UwRJY3UPQhSTkKSAFC9OSIFftm2fnsnDJmdyzEX29N5gXxagOGeTcqx88qL7WmjLK2y17MVKji2q3If+AflLdQ==}
 
   '@esbuild/aix-ppc64@0.28.1':
     resolution: {integrity: sha512-Svl7tq8k/08+p6CXPpRjQ1fKX+1odH/BQbb48fV6fj3CWHhsoIOoY87w1oHXm0qEpkIK3ZfVgp0hed3XBXzXMQ==}
@@ -1166,7 +1166,7 @@ packages:
 
 snapshots:
 
-  '@0b5vr/experimental@0.9.11': {}
+  '@0b5vr/experimental@0.10.0': {}
 
   '@esbuild/aix-ppc64@0.28.1':
     optional: true
