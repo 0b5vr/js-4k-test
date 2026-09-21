@@ -3,7 +3,6 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { terserMinifyOptions } from './terserMinifyOptions';
 import Inspect from 'vite-plugin-inspect';
 import { shaderMinifierPlugin } from './plugins/vite-shader-minifier-plugin';
-import { htmlMinifierPlugin } from './plugins/vite-html-minifier-plugin';
 
 export default defineConfig(({ mode }) => {
   return {
@@ -34,9 +33,6 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       Inspect(),
-      htmlMinifierPlugin({
-        minify: true, // mode === 'prod',
-      }),
       shaderMinifierPlugin({
         minify: true, // mode === 'prod',
         minifierOptions: {
