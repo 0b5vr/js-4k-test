@@ -1,5 +1,6 @@
 import { normalizePath, Plugin } from 'vite';
 import { promisify } from 'util';
+import MagicString from 'magic-string';
 import cp from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -176,6 +177,55 @@ async function runShaderMinifier(
 }
 
 /**
+ * Builds the JS module code that exports the given shader body with a sourcemap.
+ *
+ * @param id The module id of the shader.
+ * @param src The original shader source.
+ * @param body The shader body to embed into the module code.
+ */
+function buildShaderModule(id: string, src: string, body: string): { code: string; map: string } {
+  const magicString = new MagicString(src);
+
+  if (body !== src) {
+    magicString.update(0, src.length, body);
+  }
+
+  magicString.prepend('export default `').append('`;');
+
+  return {
+    code: magicString.toString(),
+    map: magicString.generateMap({ source: id, includeContent: true }).toString(),
+  };
+}
+
+/**
+ * Replaces every placeholder in the given code with its corresponding minified output from the given map.
+ *
+ * @param code The code to replace the placeholders in.
+ * @param placeholderMinifiedMap Map from placeholder string to minified output.
+ * @returns The replaced code and its sourcemap.
+ */
+function replacePlaceholders(
+  code: string,
+  placeholderMinifiedMap: Map<string, string>,
+): { code: string; map: string } {
+  const magicString = new MagicString(code);
+
+  for (const [placeholder, minified] of placeholderMinifiedMap) {
+    const index = code.indexOf(placeholder);
+
+    if (index !== -1) {
+      magicString.update(index, index + placeholder.length, minified);
+    }
+  }
+
+  return {
+    code: magicString.toString(),
+    map: magicString.generateMap({ hires: true }).toString(),
+  };
+}
+
+/**
  * Usage:
  *
  * - Collect shader sources and register them with {@link register}.
@@ -299,13 +349,13 @@ export const shaderMinifierPlugin: (
       }
 
       if (!minify) {
-        return `export default \`${src}\`;`;
+        return buildShaderModule(id, src, src);
       }
 
       if (bypassRegex.test(src)) {
         console.warn(`#pragma shader_minifier_plugin bypass detected in ${id}. Bypassing shader minifier`);
 
-        return `export default \`${src}\`;`;
+        return buildShaderModule(id, src, src);
       }
 
       if (!batch || isServe) {
@@ -313,18 +363,14 @@ export const shaderMinifierPlugin: (
         const minifierResultMap = await runShaderMinifier(new Map([[id, src]]), minifierOptions);
         const minified = minifierResultMap.get(id)!;
 
-        return {
-          code: `export default \`${minified}\`;`,
-        };
+        return buildShaderModule(id, src, minified);
       } else {
         // batch mode: register the shader source and return a placeholder string
         // The actual minification will happen later in `renderChunk` hook,
         // once the whole required shader sources have been collected.
         const placeholder = shaderBatch.register(id, src);
 
-        return {
-          code: `export default \`${placeholder}\`;`,
-        };
+        return buildShaderModule(id, src, placeholder);
       }
     },
     async renderChunk(code) {
@@ -337,17 +383,7 @@ export const shaderMinifierPlugin: (
         return null;
       }
 
-      let newCode = code;
-      let changed = false;
-
-      for (const [placeholder, minified] of resolved) {
-        if (newCode.includes(placeholder)) {
-          newCode = newCode.split(placeholder).join(minified);
-          changed = true;
-        }
-      }
-
-      return changed ? { code: newCode, map: null } : null;
+      return replacePlaceholders(code, resolved);
     },
   };
 };
