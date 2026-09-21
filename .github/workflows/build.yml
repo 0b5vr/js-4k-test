@@ -38,7 +38,6 @@ jobs:
       - name: report build size
         run: |
           {
-            echo "- \`postprocessed.js\`: $(node -e "console.log(($(stat -c%s dist/postprocessed.js)).toLocaleString('en-US'))") bytes"
             echo "- \`compeko.html\`: $(node -e "console.log(($(stat -c%s dist/compeko.html)).toLocaleString('en-US'))") bytes"
           } >> "$GITHUB_STEP_SUMMARY"
 

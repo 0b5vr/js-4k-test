@@ -3,6 +3,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { terserMinifyOptions } from './terserMinifyOptions';
 import Inspect from 'vite-plugin-inspect';
 import { shaderMinifierPlugin } from './plugins/vite-shader-minifier-plugin';
+import { trimChunkPlugin } from './plugins/vite-trim-chunk-plugin';
 
 export default defineConfig(({ mode }) => {
   return {
@@ -19,7 +20,7 @@ export default defineConfig(({ mode }) => {
       target: 'esnext',
       minify: mode === 'prod' ? 'terser' : false,
       terserOptions: mode === 'prod' ? terserMinifyOptions : undefined,
-      sourcemap: true,
+      sourcemap: 'hidden', // emit the map, but without the `sourceMappingURL` comment
       polyfillModulePreload: false, // size
       rollupOptions: {
         plugins: [
@@ -41,6 +42,7 @@ export default defineConfig(({ mode }) => {
           noSequence: true,
         },
       }),
+      trimChunkPlugin(),
     ],
   };
 });
