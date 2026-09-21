@@ -35,10 +35,6 @@ gl.activeTexture(GL_TEXTURE1);
 gl.bindTexture(GL_TEXTURE_2D, textureAmen);
 
 gl.uniform1i(
-  gl.getUniformLocation(programMusic, 'F'),
-  0,
-);
-gl.uniform1i(
   gl.getUniformLocation(programMusic, 'A'),
   1,
 );
@@ -119,10 +115,6 @@ if (import.meta.hot) {
     gl.activeTexture(GL_TEXTURE1);
     gl.bindTexture(GL_TEXTURE_2D, textureAmen);
 
-    gl.uniform1i(
-      gl.getUniformLocation(programMusic, 'F'),
-      0,
-    );
     gl.uniform1i(
       gl.getUniformLocation(programMusic, 'A'),
       1,

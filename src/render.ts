@@ -35,10 +35,6 @@ export function render(): void {
     gl.getUniformLocation(programRaymarchHot, 't'),
     time,
   );
-  gl.uniform1i(
-    gl.getUniformLocation(programRaymarchHot, 'f'),
-    0,
-  );
 
   // -- render -------------------------------------------------------------------------------------
   gl.bindFramebuffer(GL_FRAMEBUFFER, null);
