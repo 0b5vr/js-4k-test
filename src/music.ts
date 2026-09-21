@@ -1,6 +1,7 @@
 import { GL_COLOR_ATTACHMENT0, GL_FLOAT, GL_FRAMEBUFFER, GL_RG, GL_RG32F, GL_TEXTURE0, GL_TEXTURE1, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from './gl-constants';
-import { ENABLE_SEEKING, INTRO_LENGTH, MUSIC_BUFFER_SIZE_SQRT, MUSIC_SAMPLE_RATE, START_DELAY } from './config';
+import { ENABLE_SEEKING, EXPORT_WAV, INTRO_LENGTH, MUSIC_BUFFER_SIZE_SQRT, MUSIC_SAMPLE_RATE, START_DELAY } from './config';
 import { audio } from './audio';
+import { exportWav } from './utils/exportWav';
 import { textureFbm } from './textureFbm';
 import { gl } from './gl';
 import { programMusic } from './programMusic';
@@ -60,6 +61,10 @@ const channels = [
 pixels.map((v, i) => (
   channels[i % 2][~~(i / 2)] = v
 ));
+
+if (EXPORT_WAV) {
+  exportWav(channels, MUSIC_SAMPLE_RATE);
+}
 
 let bufferSource = audio.createBufferSource();
 bufferSource.buffer = buffer;
