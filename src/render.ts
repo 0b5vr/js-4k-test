@@ -1,8 +1,7 @@
-import { GL_FRAMEBUFFER, GL_TEXTURE0, GL_TEXTURE_2D, GL_TRIANGLES } from './gl-constants';
+import { GL_FRAMEBUFFER, GL_TRIANGLES } from './gl-constants';
 import { HEIGHT, WIDTH } from './constants';
 import { ENABLE_SEEKING, INTRO_LENGTH, START_DELAY, STOP_RENDERING_AFTER_END, STOP_RENDERING_BEFORE_START } from './config';
 import { audio } from './audio';
-import { textureFbm } from './textureFbm';
 import { gl } from './gl';
 import { seekBeginTime } from './music';
 import { programRaymarch } from './programRaymarch';
@@ -31,9 +30,6 @@ export function render(): void {
   gl.useProgram(programRaymarchHot);
 
   // -- uniforms -----------------------------------------------------------------------------------
-  gl.activeTexture(GL_TEXTURE0);
-  gl.bindTexture(GL_TEXTURE_2D, textureFbm);
-
   gl.uniform1f(
     gl.getUniformLocation(programRaymarchHot, 't'),
     time,

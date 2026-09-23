@@ -1,8 +1,7 @@
-import { GL_COLOR_ATTACHMENT0, GL_FLOAT, GL_FRAMEBUFFER, GL_RG, GL_RG32F, GL_TEXTURE0, GL_TEXTURE_2D, GL_TRIANGLES } from './gl-constants';
+import { GL_COLOR_ATTACHMENT0, GL_FLOAT, GL_FRAMEBUFFER, GL_RG, GL_RG32F, GL_TEXTURE_2D, GL_TRIANGLES } from './gl-constants';
 import { ENABLE_SEEKING, EXPORT_WAV, INTRO_LENGTH, MUSIC_BUFFER_SIZE_SQRT, MUSIC_SAMPLE_RATE, START_DELAY } from './config';
 import { audio } from './audio';
 import { exportWav } from './utils/exportWav';
-import { textureFbm } from './textureFbm';
 import { gl } from './gl';
 import { programMusic } from './programMusic';
 
@@ -42,10 +41,6 @@ bufferSource.connect(audio.destination);
 
 // -- program --------------------------------------------------------------------------------------
 gl.useProgram(programMusic);
-
-// -- uniforms -------------------------------------------------------------------------------------
-gl.activeTexture(GL_TEXTURE0);
-gl.bindTexture(GL_TEXTURE_2D, textureFbm);
 
 // -- render ---------------------------------------------------------------------------------------
 gl.bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -129,10 +124,6 @@ if (import.meta.hot) {
 
     // -- program ----------------------------------------------------------------------------------
     gl.useProgram(programMusic);
-
-    // -- uniforms ---------------------------------------------------------------------------------
-    gl.activeTexture(GL_TEXTURE0);
-    gl.bindTexture(GL_TEXTURE_2D, textureFbm);
 
     // -- render -----------------------------------------------------------------------------------
     gl.bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
