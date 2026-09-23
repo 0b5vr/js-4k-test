@@ -4,18 +4,16 @@
 precision highp float;
 //]
 
-// #pragma shader_minifier_plugin bypass
-
-uniform sampler2D F;
-
 out vec2 dest;
 
+const int TEXTURE_WIDTH = 4096;
 const float SAMPLE_RATE = 48000.0;
+
+const int STEP_SAMPLES = 5625; // = 15 / BPM * SAMPLE_RATE
+const int BEAT_SAMPLES = 4 * STEP_SAMPLES;
 
 const float PI = acos(-1.0);
 const float TAU = 2.0 * PI;
-const float BPS = 128.0 / 60.0;
-const float B2T = 1.0 / BPS;
 
 vec2 cis(float t) {
   return vec2(cos(t), sin(t));
@@ -37,15 +35,14 @@ vec2 shotgun(float t, float spread, float snap) {
 }
 
 void main() {
-  dest = vec2(0.0); // you might want to ditch this
+  dest = vec2(0.0);
 
-  uint sampleIndex = uint(gl_FragCoord.x) + 4096u * uint(gl_FragCoord.y);
-  float wholeTime = float(sampleIndex) / SAMPLE_RATE;
-  uvec4 moddedIndex = sampleIndex % uvec4(SAMPLE_RATE * B2T * vec4(1u, 4u, 16u, 64u));
-  vec4 time = vec4(moddedIndex) / SAMPLE_RATE;
+  int sampleIndex = int(gl_FragCoord.x) + TEXTURE_WIDTH * int(gl_FragCoord.y);
+  float time = float(sampleIndex) / SAMPLE_RATE;
 
-  if (time.w < 61.0 * B2T) { // kick
-    float t = time.x;
+  if (sampleIndex % (64 * BEAT_SAMPLES) < 61 * BEAT_SAMPLES) { // kick
+    float t = float(sampleIndex % BEAT_SAMPLES) / SAMPLE_RATE;
+
     float env = smoothstep(0.3, 0.1, t);
 
     dest += 0.5 * env * tanh(1.5 * sin(
@@ -56,27 +53,24 @@ void main() {
   }
 
   { // hihat
-    float t = mod(time.x, 0.25 * B2T);
-    dest += 0.4 * exp(-30.0 * t) * shotgun(t * 3000.0, 2.0, 0.1);
+    float t = float(sampleIndex % STEP_SAMPLES) / SAMPLE_RATE;
+
+    float env = exp(-60.0 * t);
+    float duck = smoothstep(0.0, 0.8, float(sampleIndex % BEAT_SAMPLES) / float(BEAT_SAMPLES));
+
+    dest += 0.5 * env * duck * shotgun(t * 3000.0, 2.0, 0.1);
   }
 
-  { // clap
-    float t = mod(time.y - B2T, 2.0 * B2T);
+  { // bass
+    float t = float((sampleIndex + 2 * STEP_SAMPLES) % BEAT_SAMPLES) / SAMPLE_RATE;
+    float l = float(2 * STEP_SAMPLES) / SAMPLE_RATE;
+    float q = l - t;
 
-    float env = mix(
-      exp(-20.0 * t),
-      exp(-200.0 * mod(t, 0.017)),
-      exp(-60.0 * max(0.0, t - 0.02))
-    );
+    float env = smoothstep(0.0, 0.01, t) * smoothstep(0.0, 0.01, q);
 
-    vec2 uv = cis(360.0 * t) + 34.0 * t;
-
-    dest += 0.2 * tanh(20.0 * env * (vec2(
-      texture(F, uv).x,
-      texture(F, uv + 0.05).x
-    )));
+    dest += 0.5 * env * tanh(10.0 * sin(TAU * 55.0 * t));
   }
 
   // fade in / fade out
-  dest *= smoothstep(0.0, 1.0, wholeTime) * smoothstep(0.0, 1.0, 60.0 - wholeTime);
+  dest *= smoothstep(0.0, 1.0, time) * smoothstep(0.0, 1.0, 60.0 - time);
 }
