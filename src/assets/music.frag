@@ -7,7 +7,6 @@ precision highp float;
 // #pragma shader_minifier_plugin bypass
 
 uniform sampler2D F;
-uniform sampler2D A;
 
 out vec2 dest;
 
@@ -76,20 +75,6 @@ void main() {
       texture(F, uv).x,
       texture(F, uv + 0.05).x
     )));
-  }
-
-  { // amen
-    int slices[] = int[](0, 0, 1, 2, 2, 0, 1, 2);
-
-    vec2 uv = vec2(
-      fract(2.0 * time.x / B2T),
-      (float(slices[int(2.0 * time.y / B2T) % 8]) + 0.5) / 4.0
-    );
-    vec2 wave = vec2(
-      texture(A, uv + vec2(0.01 * sin(10.0 * time.w), 0)).x,
-      texture(A, uv + vec2(0.01 * sin(10.0 * time.w), 0) * -1.0).x
-    );
-    dest += 0.4 * wave;
   }
 
   // fade in / fade out

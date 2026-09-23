@@ -1,11 +1,10 @@
-import { GL_COLOR_ATTACHMENT0, GL_FLOAT, GL_FRAMEBUFFER, GL_RG, GL_RG32F, GL_TEXTURE0, GL_TEXTURE1, GL_TEXTURE_2D, GL_TRIANGLES } from './gl-constants';
+import { GL_COLOR_ATTACHMENT0, GL_FLOAT, GL_FRAMEBUFFER, GL_RG, GL_RG32F, GL_TEXTURE0, GL_TEXTURE_2D, GL_TRIANGLES } from './gl-constants';
 import { ENABLE_SEEKING, EXPORT_WAV, INTRO_LENGTH, MUSIC_BUFFER_SIZE_SQRT, MUSIC_SAMPLE_RATE, START_DELAY } from './config';
 import { audio } from './audio';
 import { exportWav } from './utils/exportWav';
 import { textureFbm } from './textureFbm';
 import { gl } from './gl';
 import { programMusic } from './programMusic';
-import { promiseTextureAmen } from './promiseTextureAmen';
 
 // -- texture --------------------------------------------------------------------------------------
 const texture = gl.createTexture()!;
@@ -41,43 +40,31 @@ let bufferSource = audio.createBufferSource();
 bufferSource.buffer = buffer;
 bufferSource.connect(audio.destination);
 
+// -- program --------------------------------------------------------------------------------------
+gl.useProgram(programMusic);
+
+// -- uniforms -------------------------------------------------------------------------------------
+gl.activeTexture(GL_TEXTURE0);
+gl.bindTexture(GL_TEXTURE_2D, textureFbm);
+
 // -- render ---------------------------------------------------------------------------------------
-// the amen sample is loaded asynchronously, so we have to wait for it before rendering the music
-promiseTextureAmen.then((textureAmen) => {
-  // -- program ----------------------------------------------------------------------------------
-  gl.useProgram(programMusic);
+gl.bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+gl.viewport(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT);
+gl.drawArrays(GL_TRIANGLES, 0, 3);
 
-  // -- uniforms ---------------------------------------------------------------------------------
-  gl.activeTexture(GL_TEXTURE0);
-  gl.bindTexture(GL_TEXTURE_2D, textureFbm);
+// -- read pixels ----------------------------------------------------------------------------------
+gl.readPixels(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels);
 
-  gl.activeTexture(GL_TEXTURE1);
-  gl.bindTexture(GL_TEXTURE_2D, textureAmen);
+// -- audio ----------------------------------------------------------------------------------------
+pixels.map((v, i) => (
+  channels[i % 2][~~(i / 2)] = v
+));
 
-  gl.uniform1i(
-    gl.getUniformLocation(programMusic, 'A'),
-    1,
-  );
+if (EXPORT_WAV) {
+  exportWav(channels, MUSIC_SAMPLE_RATE);
+}
 
-  // -- render -----------------------------------------------------------------------------------
-  gl.bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-  gl.viewport(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT);
-  gl.drawArrays(GL_TRIANGLES, 0, 3);
-
-  // -- read pixels ------------------------------------------------------------------------------
-  gl.readPixels(0, 0, MUSIC_BUFFER_SIZE_SQRT, MUSIC_BUFFER_SIZE_SQRT, GL_RG, GL_FLOAT, pixels);
-
-  // -- audio ------------------------------------------------------------------------------------
-  pixels.map((v, i) => (
-    channels[i % 2][~~(i / 2)] = v
-  ));
-
-  if (EXPORT_WAV) {
-    exportWav(channels, MUSIC_SAMPLE_RATE);
-  }
-
-  bufferSource.start(START_DELAY);
-});
+bufferSource.start(START_DELAY);
 
 // -- controls -------------------------------------------------------------------------------------
 /**
@@ -136,10 +123,9 @@ if (ENABLE_SEEKING) {
 
 // -- hot ------------------------------------------------------------------------------------------
 if (import.meta.hot) {
-  import.meta.hot.accept('./programMusic', async (mod) => {
+  import.meta.hot.accept('./programMusic', (mod) => {
     if (mod == null) { return; }
     const { programMusic } = mod;
-    const textureAmen = await promiseTextureAmen;
 
     // -- program ----------------------------------------------------------------------------------
     gl.useProgram(programMusic);
@@ -147,14 +133,6 @@ if (import.meta.hot) {
     // -- uniforms ---------------------------------------------------------------------------------
     gl.activeTexture(GL_TEXTURE0);
     gl.bindTexture(GL_TEXTURE_2D, textureFbm);
-
-    gl.activeTexture(GL_TEXTURE1);
-    gl.bindTexture(GL_TEXTURE_2D, textureAmen);
-
-    gl.uniform1i(
-      gl.getUniformLocation(programMusic, 'A'),
-      1,
-    );
 
     // -- render -----------------------------------------------------------------------------------
     gl.bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
