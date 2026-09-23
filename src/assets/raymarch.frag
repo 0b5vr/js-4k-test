@@ -5,11 +5,12 @@ precision highp float;
 //]
 
 uniform float t;
-uniform sampler2D f;
 
 in vec2 v;
 
 out vec4 outColor;
+
+const float ASPECT = 16.0 / 9.0;
 
 const float PI = acos(-1.0);
 const float BPS = 128.0 / 60.0;
@@ -25,7 +26,7 @@ float sdbox(vec3 p, vec3 s) {
 
 vec4 map(vec3 p) {
   float ease = PI / 2.0 * (0.5 - 0.5 * cos(PI * exp(-8.0 * mod(t, 1.0 / BPS))));
-  p.yz *= r2d(ease);
+  p.zx *= r2d(ease);
   float d = sdbox(p, vec3(1.0));
   return vec4(d, 0, 0, 0);
 }
@@ -41,7 +42,7 @@ vec3 nMap(vec3 p) {
 
 void main() {
   vec2 p = v;
-  p.x *= 16.0 / 9.0;
+  p.x *= ASPECT;
 
   vec3 ro = vec3(0.0, 0.0, 5.0);
   vec3 rd = normalize(vec3(p, -2.0));
@@ -55,8 +56,6 @@ void main() {
   if (isect.x < 0.01) {
     vec3 N = nMap(ro);
     outColor = vec4(0.5 + 0.5 * N, 1.0);
-  } else {
-    outColor = vec4(texture(f, v + 0.1 * t));
   }
 
   outColor *= smoothstep(0.0, 1.0, t) * smoothstep(0.0, 1.0, 60.0 - t);
